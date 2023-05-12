@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+$NAMESPACE$
+
+use Service\Repository\Contracts\BaseRepositoryContract;
+
+/**
+ * Interface $CLASS$Contract.
+ *
+ * @package $NAMESPACE$
+ */
+interface $CLASS$Contract extends BaseRepositoryContract
+{
+    //
+}
