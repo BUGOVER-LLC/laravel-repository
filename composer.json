@@ -19,7 +19,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Service\\Repository\\Provider"
+        "Nucleus\\Repository\\Provider"
       ]
     }
   },
