@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Listeners;
+namespace Nucleus\Repository\Listeners;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use JetBrains\PhpStorm\NoReturn;
 
 /**
  * Class RepositoryEventListener
- * @package Service\Repository\Listeners
+ * @package Nucleus\Repository\Listeners
  */
 class RepositoryEventListener
 {

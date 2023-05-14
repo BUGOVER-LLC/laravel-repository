@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Generators\Commands;
+namespace Nucleus\Repository\Generators\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Service\Repository\Exceptions\FileAlreadyExistsException;
-use Service\Repository\Generators\ModelGenerator;
-use Service\Repository\Generators\RepositoryEloquentGenerator;
-use Service\Repository\Generators\RepositoryInterfaceGenerator;
+use Nucleus\Repository\Exceptions\FileAlreadyExistsException;
+use Nucleus\Repository\Generators\ModelGenerator;
+use Nucleus\Repository\Generators\RepositoryEloquentGenerator;
+use Nucleus\Repository\Generators\RepositoryInterfaceGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -17,7 +17,7 @@ use function func_get_args;
 
 /**
  * Class RepositoryCommand
- * @package Service\Repository\Generators\Commands
+ * @package Nucleus\Repository\Generators\Commands
  */
 class RepositoryCommand extends Command
 {

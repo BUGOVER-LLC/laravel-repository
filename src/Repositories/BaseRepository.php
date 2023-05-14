@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Repositories;
+namespace Nucleus\Repository\Repositories;
 
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -15,12 +15,12 @@ use Illuminate\Support\Collection;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Service\Repository\Contracts\WhereClauseContract;
-use Service\Repository\Exceptions\EntityNotFoundException;
-use Service\Repository\Exceptions\RepositoryException;
-use Service\Repository\Traits\Clauses;
-use Service\Repository\Traits\Prepare;
-use Service\Repository\Traits\RelationsStore;
+use Nucleus\Repository\Contracts\WhereClauseContract;
+use Nucleus\Repository\Exceptions\EntityNotFoundException;
+use Nucleus\Repository\Exceptions\RepositoryException;
+use Nucleus\Repository\Traits\Clauses;
+use Nucleus\Repository\Traits\Prepare;
+use Nucleus\Repository\Traits\RelationsStore;
 
 /**
  * Class BaseRepository

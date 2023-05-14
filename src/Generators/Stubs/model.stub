@@ -3,8 +3,8 @@
 $NAMESPACE$
 
 use Illuminate\Database\Eloquent\Model;
-use Prettus\Service\Repository\Contracts\Transformable;
-use Prettus\Service\Repository\Traits\TransformableTrait;
+use Prettus\Nucleus\Repository\Contracts\Transformable;
+use Prettus\Nucleus\Repository\Traits\TransformableTrait;
 
 /**
  * Class $CLASS$.

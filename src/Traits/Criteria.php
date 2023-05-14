@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Traits;
+namespace Nucleus\Repository\Traits;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,14 +11,14 @@ use Illuminate\Support\Arr;
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
 use ReflectionException;
-use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
-use Service\Repository\Exceptions\CriteriaException;
-use Service\Repository\Exceptions\RepositoryException;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Exceptions\CriteriaException;
+use Nucleus\Repository\Exceptions\RepositoryException;
 
 /**
  * Trait Criteria
- * @package Service\Repository\Traits
+ * @package Nucleus\Repository\Traits
  */
 trait Criteria
 {

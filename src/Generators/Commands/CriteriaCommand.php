@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Generators\Commands;
+namespace Nucleus\Repository\Generators\Commands;
 
 use Illuminate\Console\Command;
-use Service\Repository\Exceptions\FileAlreadyExistsException;
-use Service\Repository\Generators\CriteriaGenerator;
+use Nucleus\Repository\Exceptions\FileAlreadyExistsException;
+use Nucleus\Repository\Generators\CriteriaGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Class CriteriaCommand
- * @package Service\Repository\Generators\Commands
+ * @package Nucleus\Repository\Generators\Commands
  */
 class CriteriaCommand extends Command
 {

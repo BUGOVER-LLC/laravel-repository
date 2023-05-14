@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Repositories;
+namespace Nucleus\Repository\Repositories;
 
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -11,16 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Service\Repository\Contracts\BaseCacheContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
-use Service\Repository\Exceptions\RepositoryException;
-use Service\Repository\Traits\Cache;
-use Service\Repository\Traits\Criteria;
-use Service\Repository\Traits\Magick;
+use Nucleus\Repository\Contracts\BaseCacheContract;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Exceptions\RepositoryException;
+use Nucleus\Repository\Traits\Cache;
+use Nucleus\Repository\Traits\Criteria;
+use Nucleus\Repository\Traits\Magick;
 
 /**
  * Class Repository
- * @package Service\Repository\Repositories
+ * @package Nucleus\Repository\Repositories
  *
  * @property array $whereJson
  * @property array $whereExists

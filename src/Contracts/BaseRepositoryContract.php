@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Contracts;
+namespace Nucleus\Repository\Contracts;
 
 use Closure;
 use Exception;
@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use Service\Repository\Exceptions\RepositoryException;
-use Service\Repository\Repositories\Repository;
+use Nucleus\Repository\Exceptions\RepositoryException;
+use Nucleus\Repository\Repositories\Repository;
 use RuntimeException;
 
 /**

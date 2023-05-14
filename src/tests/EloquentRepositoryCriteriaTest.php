@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Eloquent\Builder;
-use Service\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
 
 class EloquentRepositoryCriteriaTests extends AbstractEloquentTests
 {

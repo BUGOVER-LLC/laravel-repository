@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 
-namespace Service\Repository\Criteries\Search;
+namespace Nucleus\Repository\Criteries\Search;
 
 
 use Illuminate\Database\Eloquent\Builder;
-use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
 
 /**
  * Class SearchCriteria

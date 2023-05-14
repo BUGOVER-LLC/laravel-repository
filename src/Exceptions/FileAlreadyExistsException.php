@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Exceptions;
+namespace Nucleus\Repository\Exceptions;
 
 use Exception;
 
 /**
  * Class FileAlreadyExistsException
- * @package Service\Repository\Exceptions
+ * @package Nucleus\Repository\Exceptions
  */
 class FileAlreadyExistsException extends Exception
 {

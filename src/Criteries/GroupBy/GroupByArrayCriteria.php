@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 
-namespace Service\Repository\Criteries\GroupBy;
+namespace Nucleus\Repository\Criteries\GroupBy;
 
 
-use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
 
 use function is_array;
 

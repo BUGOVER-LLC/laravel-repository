@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository;
+namespace Nucleus\Repository;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
-use Service\Repository\Contracts\BaseRepositoryContract;
-use Service\Repository\Generators\Commands\CriteriaCommand;
-use Service\Repository\Generators\Commands\EntityCommand;
-use Service\Repository\Generators\Commands\RepositoryCommand;
-use Service\Repository\Listeners\RepositoryEventListener;
-use Service\Repository\Repositories\BaseRepository;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Generators\Commands\CriteriaCommand;
+use Nucleus\Repository\Generators\Commands\EntityCommand;
+use Nucleus\Repository\Generators\Commands\RepositoryCommand;
+use Nucleus\Repository\Listeners\RepositoryEventListener;
+use Nucleus\Repository\Repositories\BaseRepository;
 
 /**
  * Class RepositoryModelProvider
- * @package Service\Repository\Providers
+ * @package Nucleus\Repository\Providers
  */
 class Provider extends ServiceProvider
 {

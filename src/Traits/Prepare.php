@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Traits;
+namespace Nucleus\Repository\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

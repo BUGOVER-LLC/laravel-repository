@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Criteries;
+namespace Nucleus\Repository\Criteries;
 
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,15 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use RuntimeException;
-use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
 
 use function in_array;
 use function is_string;
 
 /**
  * Class RequestCriteria
- * @package Service\Repository\Criteries
+ * @package Nucleus\Repository\Criteries
  */
 class RequestCriteria implements BaseCriteriaContract
 {

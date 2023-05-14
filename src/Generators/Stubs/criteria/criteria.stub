@@ -2,8 +2,8 @@
 
 $NAMESPACE$
 
-use Service\Repository\Contracts\CriteriaInterface;
-use Service\Repository\Contracts\RepositoryInterface;
+use Nucleus\Repository\Contracts\CriteriaInterface;
+use Nucleus\Repository\Contracts\RepositoryInterface;
 
 /**
  * Class $CLASS$Criteria.

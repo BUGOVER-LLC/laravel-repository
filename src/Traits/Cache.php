@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Traits;
+namespace Nucleus\Repository\Traits;
 
 use Closure;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Service\Repository\Repositories\Repository;
+use Nucleus\Repository\Repositories\Repository;
 
 /**
  * Trait Cache
- * @package Service\Repository\Traits
+ * @package Nucleus\Repository\Traits
  * @method resetRepository()
  */
 trait Cache

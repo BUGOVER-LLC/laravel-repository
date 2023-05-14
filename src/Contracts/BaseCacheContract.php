@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Contracts;
+namespace Nucleus\Repository\Contracts;
 
 /**
  * Interface BaseCacheContract
- * @package Service\Repository\Contracts
+ * @package Nucleus\Repository\Contracts
  */
 interface BaseCacheContract
 {

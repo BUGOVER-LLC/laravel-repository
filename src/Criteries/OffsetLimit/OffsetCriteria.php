@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 
-namespace Service\Repository\Criteries\OffsetLimit;
+namespace Nucleus\Repository\Criteries\OffsetLimit;
 
 
-use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseRepositoryContract;
 
 /**
  * Class OffsetCriteria

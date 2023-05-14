@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Eloquent\Collection;
-use Service\Repository\Tests\Stubs\EloquentUser;
+use Nucleus\Repository\Tests\Stubs\EloquentUser;
 
 class EloquentRepositoryTests extends AbstractEloquentTests
 {

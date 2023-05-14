@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Generators;
+namespace Nucleus\Repository\Generators;
 
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use Service\Repository\Exceptions\FileAlreadyExistsException;
+use Nucleus\Repository\Exceptions\FileAlreadyExistsException;
 
 use function array_key_exists;
 use function dirname;
 
 /**
  * Class Generator
- * @package Service\Repository\Generators
+ * @package Nucleus\Repository\Generators
  */
 abstract class Generator
 {

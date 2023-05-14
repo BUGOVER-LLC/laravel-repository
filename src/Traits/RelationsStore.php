@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Traits;
+namespace Nucleus\Repository\Traits;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
-use Service\Repository\Exceptions\RepositoryException;
+use Nucleus\Repository\Exceptions\RepositoryException;
 
 trait RelationsStore
 {

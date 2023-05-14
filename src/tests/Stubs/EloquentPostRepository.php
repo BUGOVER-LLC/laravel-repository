@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Tests\Stubs;
+namespace Nucleus\Repository\Tests\Stubs;
 
-use Service\Service\Repository\Repositories\BaseRepository;
+use Nucleus\Nucleus\Repository\Repositories\BaseRepository;
 
 class EloquentPostRepository extends BaseRepository
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Exceptions;
+namespace Nucleus\Repository\Exceptions;
 
 use RuntimeException;
 

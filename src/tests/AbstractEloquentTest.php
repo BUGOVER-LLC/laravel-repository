@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Traits\CapsuleManagerTrait;
 use PHPUnit\Framework\TestCase;
-use Service\Repository\Tests\Stubs\EloquentPost;
-use Service\Repository\Tests\Stubs\EloquentPostRepository;
-use Service\Repository\Tests\Stubs\EloquentUser;
-use Service\Repository\Tests\Stubs\EloquentUserRepository;
+use Nucleus\Repository\Tests\Stubs\EloquentPost;
+use Nucleus\Repository\Tests\Stubs\EloquentPostRepository;
+use Nucleus\Repository\Tests\Stubs\EloquentUser;
+use Nucleus\Repository\Tests\Stubs\EloquentUserRepository;
 
 abstract class AbstractEloquentTests extends TestCase
 {

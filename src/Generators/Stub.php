@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Generators;
+namespace Nucleus\Repository\Generators;
 
 /**
  * Class Stub
- * @package Service\Repository\Generators
+ * @package Nucleus\Repository\Generators
  */
 class Stub
 {

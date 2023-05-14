@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Traits;
+namespace Nucleus\Repository\Traits;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Service\Repository\Exceptions\RepositoryException;
+use Nucleus\Repository\Exceptions\RepositoryException;
 
 trait Magick
 {

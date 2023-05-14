@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Exceptions;
+namespace Nucleus\Repository\Exceptions;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Service\Repository\Contracts\BaseCriteriaContract;
+use Nucleus\Repository\Contracts\BaseCriteriaContract;
 
 /**
  * Class CriteriaException
- * @package Service\Repository\Exceptions
+ * @package Nucleus\Repository\Exceptions
  */
 class CriteriaException extends Exception
 {

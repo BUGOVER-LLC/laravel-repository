@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Tests\Stubs;
+namespace Nucleus\Repository\Tests\Stubs;
 
-use Service\Repository\Traits\Criteria;
-use Service\Service\Repository\Repositories\BaseRepository;
+use Nucleus\Repository\Traits\Criteria;
+use Nucleus\Nucleus\Repository\Repositories\BaseRepository;
 
 class EloquentUserRepository extends BaseRepository
 {

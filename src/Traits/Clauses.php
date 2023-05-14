@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Traits;
+namespace Nucleus\Repository\Traits;
 
 use Closure;
-use Service\Repository\Contracts\WhereClauseContract;
+use Nucleus\Repository\Contracts\WhereClauseContract;
 
 /**
  * Class Clauses

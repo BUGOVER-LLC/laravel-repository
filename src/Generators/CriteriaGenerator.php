@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Generators;
+namespace Nucleus\Repository\Generators;
 
 /**
  * Class CriteriaGenerator
- * @package Service\Repository\Generators
+ * @package Nucleus\Repository\Generators
  */
 class CriteriaGenerator extends Generator
 {

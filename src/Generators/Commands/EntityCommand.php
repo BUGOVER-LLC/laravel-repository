@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service\Repository\Generators\Commands;
+namespace Nucleus\Repository\Generators\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Class EntityCommand
- * @package Service\Repository\Generators\Commands
+ * @package Nucleus\Repository\Generators\Commands
  */
 class EntityCommand extends Command
 {
