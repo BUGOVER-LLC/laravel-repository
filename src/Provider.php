@@ -51,7 +51,7 @@ class Provider extends ServiceProvider
         if (File::exists(\dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'repository.php')) {
             $this->mergeConfigFrom(dirname(__DIR__) . '/config/repository.php', 'bugover.repository');
             // Publish config
-            $this->publishes('bugover/repository');
+            $this->publishes(['bugover/repository']);
         }
 
         // Subscribe the registered event listener
