@@ -48,13 +48,10 @@ class Provider extends ServiceProvider
     public function boot(): void
     {
         // Merge config
-        if (File::exists(\dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'package' . DIRECTORY_SEPARATOR . 'config.php')) {
-            $this->mergeConfigFrom(
-                \dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'package' . DIRECTORY_SEPARATOR . 'config.php',
-                'repository'
-            );
+        if (File::exists(\dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'repository.php')) {
+            $this->mergeConfigFrom(dirname(__DIR__) . '/config/repository.php', 'bugover.repository');
             // Publish config
-            $this->publishesConfig('bugover/laravel-repositories');
+            $this->publishesConfig('bugover/repository');
         }
 
         // Subscribe the registered event listener
