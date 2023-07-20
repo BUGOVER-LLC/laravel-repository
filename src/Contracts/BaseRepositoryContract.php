@@ -203,11 +203,6 @@ interface BaseRepositoryContract extends WhereClauseContract
     public function setPayloadCollect(): Repository|BaseRepositoryContract|static;
 
     /**
-     * @return bool
-     */
-    public function getPayloadCollect(): bool;
-
-    /**
      * Get the repository identifier.
      *
      * @return string

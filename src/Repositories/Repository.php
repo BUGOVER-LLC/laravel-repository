@@ -9,14 +9,14 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use JsonException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Nucleus\Repository\Contracts\BaseCacheContract;
 use Nucleus\Repository\Contracts\BaseRepositoryContract;
 use Nucleus\Repository\Exceptions\RepositoryException;
 use Nucleus\Repository\Traits\Cache;
 use Nucleus\Repository\Traits\Criteria;
 use Nucleus\Repository\Traits\Magick;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Repository
@@ -105,12 +105,6 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
      * @var array
      */
     protected array $fieldSearchable;
-    /**
-     * The repository model search data structure.
-     *
-     * @var bool
-     */
-    protected bool $payloadCollect = false;
 
     /**
      * {@inheritdoc}
@@ -168,7 +162,9 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
         }
 
         if (!$entity instanceof Model) {
-            throw new RepositoryException("Class {$entity} must be an instance of \\Illuminate\\Database\\Eloquent\\Model");
+            throw new RepositoryException(
+                "Class {$entity} must be an instance of \\Illuminate\\Database\\Eloquent\\Model"
+            );
         }
 
         return $entity;
@@ -243,7 +239,9 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
         $entity = new $entity($attributes);
 
         if (!$entity instanceof Model) {
-            throw new RepositoryException("Class {$entity} must be an instance of \\Illuminate\\Database\\Eloquent\\Model");
+            throw new RepositoryException(
+                "Class {$entity} must be an instance of \\Illuminate\\Database\\Eloquent\\Model"
+            );
         }
 
         return $entity;
@@ -305,7 +303,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
         // We're done, let's clean up!
         $this->resetRepository();
 
-        return $this->getPayloadCollect() ? recToRec($result) : $result;
+        return $result;
     }
 
     /**
@@ -364,24 +362,6 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
         if (method_exists($this, 'flushCriteria')) {
             $this->flushCriteria();
         }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPayloadCollect(): bool
-    {
-        return $this->payloadCollect;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setPayloadCollect(): Repository|BaseRepositoryContract|static
-    {
-        $this->payloadCollect = true;
 
         return $this;
     }
