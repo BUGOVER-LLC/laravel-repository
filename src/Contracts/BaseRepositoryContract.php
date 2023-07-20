@@ -196,13 +196,6 @@ interface BaseRepositoryContract extends WhereClauseContract
     public function setRepositoryId($repositoryId): Repository|BaseRepositoryContract|static;
 
     /**
-     * Set the repository return data to collection.
-     *
-     * @return Repository|BaseRepositoryContract
-     */
-    public function setPayloadCollect(): Repository|BaseRepositoryContract|static;
-
-    /**
      * Get the repository identifier.
      *
      * @return string
