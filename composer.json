@@ -4,6 +4,7 @@
   "minimum-stability": "stable",
   "license": "proprietary",
   "type": "service-package",
+  "version": "1.0.0",
   "authors": [
     {
       "name": "artak",
