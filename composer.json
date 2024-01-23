@@ -4,7 +4,7 @@
   "minimum-stability": "stable",
   "license": "MIT",
   "type": "service-package",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "authors": [
     {
       "name": "artak",
@@ -16,7 +16,8 @@
     "illuminate/database": "^9.0|10.0",
     "illuminate/contracts": "^9.0|10.0",
     "illuminate/support": "^9.0|10.0",
-    "illuminate/pagination": "^9.0|10.0"
+    "illuminate/pagination": "^9.0|10.0",
+    "illuminate/http": "^9.0|10.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
