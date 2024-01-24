@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace Service\Repository;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Service\Repository\Contracts\BaseRepositoryContract;
 use Service\Repository\Listeners\RepositoryEventListener;
 use Service\Repository\Repositories\BaseRepository;
-
-use function dirname;
 
 /**
  * Class RepositoryModelProvider
@@ -32,6 +29,8 @@ class Provider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/repository.php', 'repository');
+
         $this->app->bind(BaseRepositoryContract::class, BaseRepository::class);
 
         // Register the event listener
@@ -43,17 +42,8 @@ class Provider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Merge config
-        if (File::exists(dirname(__DIR__) . DS . 'config' . DS . 'package' . DS . 'config.php')) {
-            $this->mergeConfigFrom(
-                dirname(__DIR__) . DS . 'config' . DS . 'package' . DS . 'config.php',
-                'repository'
-            );
-            // Publish config
-            $this->publishesConfig('bugover/laravel-repositories');
-        }
+        $this->publishes([__DIR__ . '/../config/repository.php' => base_path('config/repository.php')], 'config');
 
-        // Subscribe the registered event listener
         /**
          * @noinspection OffsetOperationsInspection
          */

@@ -19,5 +19,5 @@ interface BaseCriteriaContract
      *
      * @return mixed
      */
-    public function apply($query, BaseRepositoryContract $repository);
+    public function apply($query, BaseRepositoryContract $repository): mixed;
 }
