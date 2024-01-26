@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Str;
 use Service\Repository\Exceptions\RepositoryException;
 
 trait RelationsStore
@@ -16,7 +15,7 @@ trait RelationsStore
     /**
      * Extract relationships.
      *
-     * @param object|Model $entity
+     * @param object $entity
      * @param array $attributes
      *
      * @return array
@@ -55,7 +54,7 @@ trait RelationsStore
         foreach ($relations as $method => $relation) {
             switch ($relation['class']) {
                 case BelongsToMany::class:
-                    $entity->{$method}()->sync((array) $relation['values'], $detaching);
+                    $entity->{$method}()->sync((array)$relation['values'], $detaching);
                     break;
                 case HasMany::class:
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
@@ -63,7 +62,8 @@ trait RelationsStore
                         $rel_repository->getRepositoryId() . '.entity.creating',
                         [$this, $relation['values']]
                     );
-                    $entity->{$method}()->createMany($relation['values'], $detaching);
+                    $entity->{$method}()->createMany(array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
+                        $detaching);
                     $this->getContainer('events')->dispatch(
                         $rel_repository->getRepositoryId() . '.entity.created',
                         [$this, $relation['values']]
@@ -94,9 +94,6 @@ trait RelationsStore
      */
     protected function getRelationRepositoryId($entity, $method): mixed
     {
-        $namespace = 'Src\Repositories\\';
-        $xt_name = Str::afterLast(\get_class($entity->{$method}()->getRelated()), '\\');
-
-        return app($namespace . $xt_name . '\\' . $xt_name . 'Contract');
+        return app($entity->{$method}()->getRelated()->getModelRepositoryClass());
     }
 }

@@ -4,7 +4,7 @@
   "minimum-stability": "stable",
   "license": "MIT",
   "type": "service-package",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "authors": [
     {
       "name": "artak",
@@ -20,7 +20,8 @@
     "illuminate/http": "^9.0|10.0"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "friendsofphp/php-cs-fixer": "^3.0.0"
   },
   "extra": {
     "laravel": {
