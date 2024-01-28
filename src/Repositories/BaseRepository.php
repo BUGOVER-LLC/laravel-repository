@@ -134,8 +134,6 @@ class BaseRepository extends Repository
         $updated = [];
 
         foreach ($entities as $entity) {
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.updating', [$this, $entity]);
-
             // Extract relationships
             if ($syncRelations) {
                 $relations = $this->extractRelations($entity, $attrs);
@@ -398,9 +396,6 @@ class BaseRepository extends Repository
     {
         // Create a new instance
         $entity = $this->createModel();
-
-        // Fire the created event
-        $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.creating', [$this, $entity]);
 
         // Extract relationships
         if ($sync_relations) {
@@ -700,9 +695,6 @@ class BaseRepository extends Repository
         $entity = $id instanceof Model ? $id : $this->find($id);
 
         if ($entity) {
-            // Fire the updated event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.updating', [$this, $entity]);
-
             // Extract relationships
             if ($sync_relations) {
                 $relations = $this->extractRelations($entity, $attrs);
@@ -795,9 +787,6 @@ class BaseRepository extends Repository
     {
         // Create a new instance
         $entity = $this->createModel();
-
-        // Fire the created event
-        $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.creating', [$this, $entity]);
 
         $inserted = $this->executeCallback(
             static::class,

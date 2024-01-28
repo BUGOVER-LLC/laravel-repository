@@ -58,10 +58,6 @@ trait RelationsStore
                     break;
                 case HasMany::class:
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.creating',
-                        [$this, $relation['values']]
-                    );
                     $entity->{$method}()->createMany(array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
                         $detaching);
                     $this->getContainer('events')->dispatch(
@@ -71,10 +67,6 @@ trait RelationsStore
                     break;
                 case HasOne::class:
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.creating',
-                        [$this, $relation['values']]
-                    );
                     $entity->{$method}()->create($relation['values'], $detaching);
                     $this->getContainer('events')->dispatch(
                         $rel_repository->getRepositoryId() . '.entity.created',
