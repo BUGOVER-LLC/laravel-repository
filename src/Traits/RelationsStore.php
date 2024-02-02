@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Service\Repository\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -58,8 +57,10 @@ trait RelationsStore
                     break;
                 case HasMany::class:
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $entity->{$method}()->createMany(array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
-                        $detaching);
+                    $entity->{$method}()->createMany(
+                        array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
+                        $detaching
+                    );
                     $this->getContainer('events')->dispatch(
                         $rel_repository->getRepositoryId() . '.entity.created',
                         [$this, $relation['values']]

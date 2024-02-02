@@ -4,7 +4,7 @@
   "minimum-stability": "stable",
   "license": "MIT",
   "type": "service-package",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "authors": [
     {
       "name": "artak",
@@ -21,12 +21,13 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "friendsofphp/php-cs-fixer": "^3.0.0"
+    "friendsofphp/php-cs-fixer": "^3.0.0",
+    "phpunit/phpunit": "^9.6.0"
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Service\\Repository\\Provider"
+        "Service\\Repository\\RepositoryServiceProvider"
       ]
     }
   },

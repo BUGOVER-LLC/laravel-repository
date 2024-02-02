@@ -15,7 +15,7 @@ use Service\Repository\Repositories\BaseRepository;
  *
  * @package Service\Repository\Providers
  */
-class Provider extends ServiceProvider
+class RepositoryServiceProvider extends ServiceProvider
 {
     /**
      * The repository alias pattern.
