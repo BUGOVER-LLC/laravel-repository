@@ -7,10 +7,7 @@ namespace Service\Repository\Repositories;
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Facades\DB;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -113,12 +110,6 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
      * @var array
      */
     protected array $fieldSearchable;
-    /**
-     * The repository model search data structure.
-     *
-     * @var bool
-     */
-    protected bool $payloadCollect = false;
 
     /**
      * {@inheritdoc}
@@ -198,7 +189,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     /**
      * {@inheritdoc}
      */
-    public function setModel($model)
+    public function setModel($model): static
     {
         $this->model = $model;
 
@@ -219,7 +210,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     /**
      * {@inheritdoc}
      */
-    public function setContainer(Container $container): Repository|BaseRepositoryContract|static
+    public function setContainer(Container $container): static
     {
         $this->container = $container;
 
@@ -239,11 +230,11 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
      *
      * @throws RepositoryException
      */
-    public function getFillable(): ?array
+    public function getFillable(): array
     {
         $entity = $this->model();
 
-        return $entity->getFillable() ?: null;
+        return $entity->getFillable() ?: [];
     }
 
     /**
@@ -279,33 +270,13 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
      * @return string
      * @throws RepositoryException
      */
-    public function getMap(): string
+    public function getMap(): ?string
     {
-        return $this->model()->getMap();
-    }
+        if (method_exists($this->model(), 'getMap')) {
+            return $this->model()->getMap();
+        }
 
-    /**
-     * Creates a new QueryBuilder instance that is prepopulated for this entity name.
-     *
-     * @param ?string $alias
-     * @param array $columns
-     * @param null $indexBy The index for the from.
-     *
-     * @return QueryBuilder
-     * @throws RepositoryException
-     */
-    protected function createQueryBuilder(
-        string $alias = null,
-        array $columns = [],
-        $indexBy = null
-    ): QueryBuilder
-    {
-        return DB::table($this->getTable(), $alias)->select($columns)->from(
-            $this->getTable(),
-            $alias
-        )->useIndex(
-            $indexBy
-        );
+        return null;
     }
 
     /**
@@ -315,37 +286,6 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     public function getTable(): ?string
     {
         return $this->model()->getTable();
-    }
-
-    /**
-     * Creates a new QueryBuilder instance that is prepopulated for this entity name.
-     *
-     * @param ?string $alias
-     * @param array $columns
-     * @param null $indexBy The index for the from.
-     *
-     * @return EloquentBuilder
-     * @throws RepositoryException
-     * @throws BindingResolutionException
-     */
-    protected function createModelBuilder(
-        string $alias = null,
-        array $columns = [],
-        $indexBy = null
-    ): EloquentBuilder
-    {
-        return $this->getModelInstance()::query()->select($columns)->from($this->getTable(), $alias)->useIndex(
-            $indexBy
-        );
-    }
-
-    /**
-     * @return Model
-     * @throws BindingResolutionException
-     */
-    private function getModelInstance(): Model
-    {
-        return $this->getContainer()->make($this->getModel());
     }
 
     /**
@@ -379,7 +319,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
         // We're done, let's clean up!
         $this->resetRepository();
 
-        return $this->getPayloadCollect() ? recToRec($result) : $result;
+        return $result;
     }
 
     /**
@@ -438,24 +378,6 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
         if (method_exists($this, 'flushCriteria')) {
             $this->flushCriteria();
         }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPayloadCollect(): bool
-    {
-        return $this->payloadCollect;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setPayloadCollect(): Repository|BaseRepositoryContract|static
-    {
-        $this->payloadCollect = true;
 
         return $this;
     }

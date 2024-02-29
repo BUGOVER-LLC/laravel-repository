@@ -17,8 +17,9 @@ use Service\Repository\Contracts\WhereClauseContract;
 use Service\Repository\Exceptions\EntityNotFoundException;
 use Service\Repository\Exceptions\RepositoryException;
 use Service\Repository\Traits\Clauses;
-use Service\Repository\Traits\StoreRelations;
+use Service\Repository\Traits\Prepare;
 use Service\Repository\Traits\Store;
+use Service\Repository\Traits\StoreRelations;
 
 use function func_get_args;
 use function is_array;
@@ -32,6 +33,7 @@ use function is_array;
  */
 class EloquentRepository extends Repository implements WhereClauseContract
 {
+    use Prepare;
     use Clauses;
     use Store;
     use StoreRelations;
@@ -47,12 +49,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function firstLatest($column = null, array $attributes = ['*']): ?object
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->latest($column)->first($attributes)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->latest($column)->first($attributes));
     }
 
     /**
@@ -65,12 +63,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function latest($column = null): Builder
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->latest($column)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->latest($column));
     }
 
     /**
@@ -83,12 +77,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function firstOldest($column = null): ?object
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->oldest($column)->first()
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->oldest($column)->first());
     }
 
     /**
@@ -101,12 +91,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function oldest($column = null): Builder
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->oldest($column)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->oldest($column));
     }
 
     /**
@@ -121,18 +107,14 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function firstWhere(array $where, $attributes = ['*']): ?object
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             function () use ($where, $attributes) {
                 [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
 
                 $this->where($attribute, $operator, $value, $boolean);
 
                 return $this->prepareQuery($this->createModel())->first($attributes);
-            }
-        );
+            });
     }
 
     /**
@@ -169,12 +151,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function exists(string $column = '*'): bool
     {
-        return (bool)$this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->exists($column)
-        );
+        return (bool)$this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->exists($column));
     }
 
     /////////////////////////         RESET WHERE CLAUSES          /////////////////////////
@@ -213,12 +191,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function find($id, $attrs = ['*']): ?object
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->find($id, $attrs)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->find($id, $attrs));
     }
 
     /**
@@ -248,12 +222,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findBy($attribute, $value, $attributes = ['*']): object|null
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->where($attribute, '=', $value)->first($attributes)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->where($attribute, '=', $value)->first($attributes));
     }
 
     /**
@@ -267,12 +237,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findFirst($attr = ['*']): object|null
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->first($attr)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->first($attr));
     }
 
     /**
@@ -295,12 +261,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
     ): LengthAwarePaginator {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            array_merge(func_get_args(), compact('page')),
-            fn() => $this->prepareQuery($this->createModel())->paginate($perPage, $attributes, $pageName, $page)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('page')),
+            fn() => $this->prepareQuery($this->createModel())->paginate($perPage, $attributes, $pageName, $page));
     }
 
     /**
@@ -323,12 +285,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
     ): \Illuminate\Contracts\Pagination\Paginator {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            array_merge(func_get_args(), compact('page')),
-            fn() => $this->prepareQuery($this->createModel())->simplePaginate($perPage, $attributes, $pageName, $page)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('page')),
+            fn() => $this->prepareQuery($this->createModel())->simplePaginate($perPage, $attributes, $pageName, $page));
     }
 
     /**
@@ -347,12 +305,9 @@ class EloquentRepository extends Repository implements WhereClauseContract
     {
         $cursor = $cursor ?: Paginator::resolveCurrentPage($cursorName);
 
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            array_merge(func_get_args(), compact('cursor')),
-            fn() => $this->prepareQuery($this->createModel())->cursorPaginate($perPage, $columns, $cursorName, $cursor)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('cursor')),
+            fn() => $this->prepareQuery($this->createModel())->cursorPaginate($perPage, $columns, $cursorName,
+                $cursor));
     }
 
     /**
@@ -362,18 +317,13 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findWhere(array $where, $attrs = ['*'])
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            function () use ($where, $attrs) {
-                [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($where, $attrs) {
+            [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
 
-                $this->where($attribute, $operator, $value, $boolean);
+            $this->where($attribute, $operator, $value, $boolean);
 
-                return $this->prepareQuery($this->createModel())->get($attrs);
-            }
-        );
+            return $this->prepareQuery($this->createModel())->get($attrs);
+        });
     }
 
     /**
@@ -388,18 +338,13 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findWhereIn(array $where, $attrs = ['*'])
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            function () use ($where, $attrs) {
-                [$attribute, $values, $boolean, $not] = array_pad($where, 4, null);
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($where, $attrs) {
+            [$attribute, $values, $boolean, $not] = array_pad($where, 4, null);
 
-                $this->whereIn($attribute, $values, $boolean, $not);
+            $this->whereIn($attribute, $values, $boolean, $not);
 
-                return $this->prepareQuery($this->createModel())->get($attrs);
-            }
-        );
+            return $this->prepareQuery($this->createModel())->get($attrs);
+        });
     }
 
     /**
@@ -414,18 +359,14 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findWhereNotIn(array $where, $attributes = ['*'])
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             function () use ($where, $attributes) {
                 [$attribute, $values, $boolean] = array_pad($where, 3, null);
 
                 $this->whereNotIn($attribute, $values, $boolean);
 
                 return $this->prepareQuery($this->createModel())->get($attributes);
-            }
-        );
+            });
     }
 
     /**
@@ -436,18 +377,14 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findWhereHas(array $where, $attributes = ['*'])
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             function () use ($where, $attributes) {
                 [$relation, $callback, $operator, $count] = array_pad($where, 4, null);
 
                 $this->whereHas($relation, $callback, $operator, $count);
 
                 return $this->prepareQuery($this->createModel())->get($attributes);
-            }
-        );
+            });
     }
 
     /**
@@ -505,12 +442,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function findAll($attr = ['*']): Collection
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->get($attr)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->get($attr));
     }
 
     /**
@@ -524,12 +457,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function count($columns = '*'): int
     {
-        return (int)$this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->count($columns)
-        );
+        return (int)$this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->count($columns));
     }
 
     /**
@@ -625,12 +554,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function min($column)
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->min($column)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->min($column));
     }
 
     /**
@@ -644,12 +569,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function max($column)
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->max($column)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->max($column));
     }
 
     /**
@@ -663,14 +584,9 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function avg($column)
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            function () use ($column) {
-                return $this->prepareQuery($this->createModel())->avg($column);
-            }
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($column) {
+            return $this->prepareQuery($this->createModel())->avg($column);
+        });
     }
 
     /**
@@ -684,12 +600,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function sum($column)
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->sum($column)
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->sum($column));
     }
 
     /**
@@ -701,11 +613,7 @@ class EloquentRepository extends Repository implements WhereClauseContract
      */
     public function deletesBy($where, array $values = []): ?bool
     {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->whereIn($where, $values)->delete()
-        );
+        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->whereIn($where, $values)->delete());
     }
 }

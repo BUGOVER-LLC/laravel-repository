@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Service\Repository\Exceptions\RepositoryException;
 
+use function get_class;
+
 trait StoreRelations
 {
     /**
@@ -19,7 +21,7 @@ trait StoreRelations
      *
      * @return array
      */
-    protected function extractRelations(object $entity, array $attributes): array
+    private function extractRelations(object $entity, array $attributes): array
     {
         $relations = [];
         $potential = array_diff(array_keys($attributes), $entity->getFillable());
@@ -30,7 +32,7 @@ trait StoreRelations
                 if (method_exists($entity, $relation)) {
                     $relations[$relation] = [
                         'values' => $attributes[$relation],
-                        'class' => \get_class($entity->{$relation}()),
+                        'class' => get_class($entity->{$relation}()),
                     ];
                 }
             }
@@ -48,7 +50,7 @@ trait StoreRelations
      * @return void
      * @throws RepositoryException
      */
-    protected function syncRelations(object $entity, array $relations, bool $detaching = true): void
+    private function syncRelations(object $entity, array $relations, bool $detaching = true): void
     {
         foreach ($relations as $method => $relation) {
             switch ($relation['class']) {
@@ -81,11 +83,11 @@ trait StoreRelations
     }
 
     /**
-     * @param $entity
-     * @param $method
+     * @param object $entity
+     * @param string $method
      * @return mixed
      */
-    protected function getRelationRepositoryId($entity, $method): mixed
+    private function getRelationRepositoryId(object $entity, string $method): mixed
     {
         return app($entity->{$method}()->getRelated()->getModelRepositoryClass());
     }

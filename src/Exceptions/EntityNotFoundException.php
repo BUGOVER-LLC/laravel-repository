@@ -32,6 +32,8 @@ class EntityNotFoundException extends RuntimeException
      */
     public function __construct($model, $id)
     {
+        parent::__construct();
+
         $this->id = $id;
         $this->model = $model;
         $this->message = "No results for model [{$model}] #{$id}.";

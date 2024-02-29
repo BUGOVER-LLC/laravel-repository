@@ -7,6 +7,10 @@ namespace Service\Repository\Traits;
 use Closure;
 use Service\Repository\Contracts\WhereClauseContract;
 
+use function func_get_args;
+use function is_array;
+use function is_string;
+
 /**
  * Class Clauses
  *
@@ -239,8 +243,7 @@ trait Clauses
         $second = null,
         string $type = 'inner',
         $where = false
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->join[] = [$table, $first, $operator, $second, $type, $where];
 
         return $this;
@@ -252,7 +255,7 @@ trait Clauses
     public function whereIn($attr, $values, $boolean = 'and', $not = false): WhereClauseContract
     {
         // The last `$boolean` & `$not` expressions are intentional to fix list() & array_pad() results
-        $this->whereIn[] = [$attr, $values, $boolean ?: 'and', (bool) $not];
+        $this->whereIn[] = [$attr, $values, $boolean ?: 'and', (bool)$not];
 
         return $this;
     }
@@ -314,7 +317,7 @@ trait Clauses
      */
     public function groupBy($column): static
     {
-        $this->groupBy = array_merge((array) $this->groupBy, \is_array($column) ? $column : [$column]);
+        $this->groupBy = array_merge((array)$this->groupBy, is_array($column) ? $column : [$column]);
 
         return $this;
     }
@@ -355,8 +358,7 @@ trait Clauses
         $attributes,
         string $boolean = 'and',
         bool $not = false
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->whereJson[] = [$where, $attributes, $boolean ?: 'and', $not ?: false];
 
         return $this;
@@ -401,8 +403,7 @@ trait Clauses
         $count = 1,
         $boolean = 'and',
         $callback = null
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->has[] = [$relation, $operator, $count, $boolean, $callback];
 
         return $this;
@@ -438,8 +439,7 @@ trait Clauses
         $count = 1,
         $boolean = 'and',
         $callback = null
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->hasMorph[] = [$relation, $types, $operator, $count, $boolean, $callback];
 
         return $this;
@@ -454,8 +454,7 @@ trait Clauses
         $callback = null,
         $operator = '>=',
         $count = 1
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->whereHasMorph[] = [$relation, $types, $callback, $operator, $count];
 
         return $this;
@@ -539,8 +538,7 @@ trait Clauses
         string $second,
         string $operator = '<=',
         int $count = 0
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->whereRaw("DATEDIFF($first,$second) $operator $count");
 
         return $this;
@@ -574,8 +572,7 @@ trait Clauses
         string $second,
         string $operator = '<=',
         int $count = 0
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->whereRaw("TIMEDIFF($first,$second) $operator $count");
 
         return $this;
@@ -589,8 +586,7 @@ trait Clauses
         string $second,
         string $operator = '<=',
         int $count = 0
-    ): WhereClauseContract
-    {
+    ): WhereClauseContract {
         $this->whereRaw("TIMESTAMPDIFF($first,$second) $operator $count");
 
         return $this;
@@ -682,7 +678,7 @@ trait Clauses
      */
     public function except(array ...$values): WhereClauseContract
     {
-        $this->except[] = \is_array($values) ? $values : [$values];
+        $this->except[] = is_array($values) ? $values : [$values];
 
         return $this;
     }
@@ -692,8 +688,8 @@ trait Clauses
      */
     public function with($rels): WhereClauseContract
     {
-        if (\is_string($rels)) {
-            $rels = \func_get_args();
+        if (is_string($rels)) {
+            $rels = func_get_args();
         }
 
         $this->relations = $rels;
@@ -704,10 +700,10 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withCount($relations)
+    public function withCount($relations): static
     {
-        if (\is_string($relations)) {
-            $relations = \func_get_args();
+        if (is_string($relations)) {
+            $relations = func_get_args();
         }
 
         $this->withCount = $relations;
@@ -718,10 +714,10 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withExists($relation)
+    public function withExists($relation): static
     {
-        if (\is_string($relation)) {
-            $relation = \func_get_args();
+        if (is_string($relation)) {
+            $relation = func_get_args();
         }
 
         $this->withExists = $relation;
@@ -732,7 +728,7 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withSum($relation, $field)
+    public function withSum($relation, $field): static
     {
         $this->withSum[] = [$relation, $field];
 
@@ -742,7 +738,7 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withAvg($relation, $field)
+    public function withAvg($relation, $field): static
     {
         $this->withAvg[] = [$relation, $field];
 
@@ -752,7 +748,7 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withMax($relation, $field)
+    public function withMax($relation, $field): static
     {
         $this->withMax[] = [$relation, $field];
 
@@ -762,7 +758,7 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withMin($relation, $field)
+    public function withMin($relation, $field): static
     {
         $this->withMin[] = [$relation, $field];
 
@@ -772,7 +768,7 @@ trait Clauses
     /**
      * @inheritdoc
      */
-    public function withTrashed(): WhereClauseContract
+    public function withTrashed(): static
     {
         $this->withTrashed = true;
 
@@ -782,7 +778,7 @@ trait Clauses
     /**
      * {@inheritdoc}
      */
-    public function scope($name, array $parameters = []): WhereClauseContract
+    public function scope($name, array $parameters = []): static
     {
         $this->scopes[$name] = $parameters;
 
@@ -792,7 +788,7 @@ trait Clauses
     /**
      * {@inheritdoc}
      */
-    public function withoutScope()
+    public function withoutScope(): static
     {
         $this->withoutScope = true;
 

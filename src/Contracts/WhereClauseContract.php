@@ -247,7 +247,7 @@ interface WhereClauseContract
     /**
      * @return static
      */
-    public function withTrashed(): WhereClauseContract;
+    public function withTrashed(): static;
 
     /**
      * @param $attribute
@@ -473,10 +473,10 @@ interface WhereClauseContract
      *
      * @return static
      */
-    public function scope($name, array $parameters = []): WhereClauseContract;
+    public function scope($name, array $parameters = []): static;
 
     /**
      * @return static
      */
-    public function withoutScope();
+    public function withoutScope(): static;
 }

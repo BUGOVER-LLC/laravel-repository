@@ -48,9 +48,9 @@ interface BaseRepositoryContract
     /**
      * Get Model fillable array
      *
-     * @return array|null
+     * @return array
      */
-    public function getFillable(): ?array;
+    public function getFillable(): array;
 
     /**
      * Get Searchable Fields
@@ -197,18 +197,6 @@ interface BaseRepositoryContract
     public function setRepositoryId($repositoryId): Repository|BaseRepositoryContract|static;
 
     /**
-     * Set the repository return data to collection.
-     *
-     * @return Repository|BaseRepositoryContract
-     */
-    public function setPayloadCollect(): Repository|BaseRepositoryContract|static;
-
-    /**
-     * @return bool
-     */
-    public function getPayloadCollect(): bool;
-
-    /**
      * Get the repository identifier.
      *
      * @return string
@@ -222,7 +210,7 @@ interface BaseRepositoryContract
      *
      * @return static
      */
-    public function setModel($model);
+    public function setModel($model): static;
 
     /**
      * Get the repository model.
@@ -234,9 +222,9 @@ interface BaseRepositoryContract
     /**
      * Get the repository model.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMap(): string;
+    public function getMap(): ?string;
 
     /**
      * Create a new repository model instance.

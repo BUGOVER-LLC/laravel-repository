@@ -16,7 +16,7 @@ trait Prepare
      * @param Model|Builder $model
      * @return Builder|Model
      */
-    protected function prepareQuery(Model|Builder $model): Builder|Model
+    private function prepareQuery(Model|Builder $model): Builder|Model
     {
         // Add a basic where clause to the query current table
         $model = $this->prepareTable($model);
@@ -48,7 +48,7 @@ trait Prepare
      * @param Builder|Model $model
      * @return Model|Builder
      */
-    protected function prepareTable(Model|Builder $model): Model|Builder
+    private function prepareTable(Model|Builder $model): Model|Builder
     {
         foreach ($this->where as $where) {
             [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
@@ -162,7 +162,7 @@ trait Prepare
      * @param Builder|Model $model
      * @return Builder|Model
      */
-    protected function prepareDateQuery(Model|Builder $model): Model|Builder
+    private function prepareDateQuery(Model|Builder $model): Model|Builder
     {
         foreach ($this->whereDate as $where) {
             [$column, $operator, $value, $boolean] = array_pad($where, 4, null);
@@ -198,7 +198,7 @@ trait Prepare
      * @param Builder|Model $model
      * @return Builder|Model
      */
-    protected function prepareRelationQuery(Model|Builder $model): Model|Builder
+    private function prepareRelationQuery(Model|Builder $model): Model|Builder
     {
         // Add a "where has" clause to the query
         foreach ($this->has as $has) {
@@ -277,7 +277,7 @@ trait Prepare
      * @param Builder|Model $model
      * @return Builder|Model
      */
-    protected function prepareRelations(Model|Builder $model): Model|Builder
+    private function prepareRelations(Model|Builder $model): Model|Builder
     {
         if (!empty($this->relations)) {
             $model = $model->with($this->relations);
@@ -297,7 +297,7 @@ trait Prepare
      * @param Builder|Model $model
      * @return Builder|Model
      */
-    protected function prepareRelationAgg(Model|Builder $model): Model|Builder
+    private function prepareRelationAgg(Model|Builder $model): Model|Builder
     {
         // Add a basic whereJson clause to the query
         if (!empty($this->withCount)) {
@@ -343,7 +343,7 @@ trait Prepare
      * @param Builder|Model $model
      * @return Model|Builder
      */
-    protected function prepareCommonQuery(Model|Builder $model): Model|Builder
+    private function prepareCommonQuery(Model|Builder $model): Model|Builder
     {
         // Add a "scope" to the query
         foreach ($this->scopes as $scope => $parameters) {

@@ -26,21 +26,21 @@ trait Cache
      *
      * @var null|int
      */
-    protected ?int $cacheLifetime = null;
+    private ?int $cacheLifetime = null;
 
     /**
      * The repository cache driver.
      *
      * @var null|string
      */
-    protected ?string $cacheDriver = null;
+    private ?string $cacheDriver = null;
 
     /**
      * Indicate if the repository cache clear is enabled.
      *
      * @var bool
      */
-    protected bool $cacheClearEnabled = true;
+    private bool $cacheClearEnabled = true;
 
     /**
      * {@inheritdoc}
@@ -199,66 +199,66 @@ trait Cache
     /**
      * Generate unique query hash.
      *
-     * @param $args
+     * @param array $args
      *
      * @return string
      * @throws JsonException
      */
-    protected function generateCacheHash($args): string
+    protected function generateCacheHash(array $args): string
     {
         return md5(json_encode($args + [
-                    $this->getRepositoryId(),
-                    $this->getModel(),
-                    $this->getCacheDriver(),
-                    $this->getCacheLifetime(),
-                    $this->whereJson,
-                    $this->whereExists,
-                    $this->whereJsonNotIn,
-                    $this->orWhereJson,
-                    $this->whereJsonCount,
-                    $this->when,
-                    $this->has,
-                    $this->orHas,
-                    $this->orWhereHas,
-                    $this->doesntHave,
-                    $this->orDoesntHave,
-                    $this->whereDoesntHave,
-                    $this->orWhereDoesntHave,
-                    $this->hasMorph,
-                    $this->whereHasMorph,
-                    $this->whereBetween,
-                    $this->orWhereBetween,
-                    $this->whereNotBetween,
-                    $this->whereDate,
-                    $this->whereMonth,
-                    $this->whereDay,
-                    $this->whereTime,
-                    $this->withCount,
-                    $this->withExists,
-                    $this->withMax,
-                    $this->withMin,
-                    $this->withAvg,
-                    $this->withSum,
-                    $this->whereRaw,
-                    $this->orWhereRaw,
-                    $this->except,
-                    $this->relations,
-                    $this->where,
-                    $this->orWhere,
-                    $this->whereIn,
-                    $this->whereNotIn,
-                    $this->whereHas,
-                    $this->scopes,
-                    $this->orderBy,
-                    $this->groupBy,
-                    $this->having,
-                    $this->havingRaw,
-                    $this->join,
-                    $this->offset,
-                    $this->limit,
-                    $this->withTrashed,
-                    $this->withoutScope,
-                ], JSON_THROW_ON_ERROR));
+                $this->getRepositoryId(),
+                $this->getModel(),
+                $this->getCacheDriver(),
+                $this->getCacheLifetime(),
+                $this->whereJson,
+                $this->whereExists,
+                $this->whereJsonNotIn,
+                $this->orWhereJson,
+                $this->whereJsonCount,
+                $this->when,
+                $this->has,
+                $this->orHas,
+                $this->orWhereHas,
+                $this->doesntHave,
+                $this->orDoesntHave,
+                $this->whereDoesntHave,
+                $this->orWhereDoesntHave,
+                $this->hasMorph,
+                $this->whereHasMorph,
+                $this->whereBetween,
+                $this->orWhereBetween,
+                $this->whereNotBetween,
+                $this->whereDate,
+                $this->whereMonth,
+                $this->whereDay,
+                $this->whereTime,
+                $this->withCount,
+                $this->withExists,
+                $this->withMax,
+                $this->withMin,
+                $this->withAvg,
+                $this->withSum,
+                $this->whereRaw,
+                $this->orWhereRaw,
+                $this->except,
+                $this->relations,
+                $this->where,
+                $this->orWhere,
+                $this->whereIn,
+                $this->whereNotIn,
+                $this->whereHas,
+                $this->scopes,
+                $this->orderBy,
+                $this->groupBy,
+                $this->having,
+                $this->havingRaw,
+                $this->join,
+                $this->offset,
+                $this->limit,
+                $this->withTrashed,
+                $this->withoutScope,
+            ], JSON_THROW_ON_ERROR));
     }
 
     /**

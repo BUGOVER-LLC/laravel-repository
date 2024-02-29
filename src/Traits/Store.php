@@ -204,12 +204,8 @@ trait Store
         // Create a new instance
         $entity = $this->createModel();
 
-        $inserted = $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->insert($values)
-        );
+        $inserted = $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->insert($values));
 
         // Fire the created event
         $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
