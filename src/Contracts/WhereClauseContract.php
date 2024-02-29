@@ -14,7 +14,7 @@ interface WhereClauseContract
     /**
      * @param string $where
      * @param $attributes
-     * @param $boolean
+     * @param string $boolean
      * @param bool $not
      * @return static
      */

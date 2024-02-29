@@ -6,7 +6,7 @@ use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
 $rules = [
-    'psr12' => true,
+    '@PSR12' => true,
     'array_indentation' => true,
     'no_unused_imports' => true,
     'array_syntax' => ['syntax' => 'short'],

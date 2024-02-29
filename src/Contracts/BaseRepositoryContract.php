@@ -435,7 +435,7 @@ interface BaseRepositoryContract
      *
      * @return null|object
      */
-    public function update($id, array $attrs = [], bool $sync_relations = false): ?object;
+    public function update(int|string $id, array $attrs = [], bool $sync_relations = false): ?object;
 
     /**
      * Store the entity with the given attributes.
@@ -455,7 +455,7 @@ interface BaseRepositoryContract
      *
      * @return bool|object
      */
-    public function delete($id): false|object;
+    public function delete(int|string $id): false|object;
 
     /**
      * Restore an entity with the given id.

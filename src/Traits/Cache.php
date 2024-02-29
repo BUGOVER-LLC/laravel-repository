@@ -174,9 +174,9 @@ trait Cache
 
         // We need cache tags, check if default driver supports it
         if (method_exists($this->getContainer('cache')->getStore(), 'tags')) {
-            $result = -1 === $lifetime
-                ? $this->getContainer('cache')->tags($repository_id)->rememberForever($cache_key, $closure)
-                : $this->getContainer('cache')->tags($repository_id)->remember($cache_key, $lifetime, $closure);
+            $result = -1 === $lifetime ? $this->getContainer('cache')->tags($repository_id)->rememberForever($cache_key,
+                $closure) : $this->getContainer('cache')->tags($repository_id)->remember($cache_key, $lifetime,
+                $closure);
 
             // We're done, let's clean up!
             $this->resetRepository();
@@ -187,9 +187,8 @@ trait Cache
         // Default cache driver doesn't support tags, let's do it manually
         $this->storeCacheKeys($class, $method, $hash);
 
-        $result = -1 === $lifetime
-            ? $this->getContainer('cache')->rememberForever($cache_key, $closure)
-            : $this->getContainer('cache')->remember($cache_key, $lifetime, $closure);
+        $result = -1 === $lifetime ? $this->getContainer('cache')->rememberForever($cache_key,
+            $closure) : $this->getContainer('cache')->remember($cache_key, $lifetime, $closure);
 
         // We're done, let's clean up!
         $this->resetCachedRepository();
@@ -207,9 +206,7 @@ trait Cache
      */
     protected function generateCacheHash($args): string
     {
-        return md5(
-            json_encode(
-                $args + [
+        return md5(json_encode($args + [
                     $this->getRepositoryId(),
                     $this->getModel(),
                     $this->getCacheDriver(),
@@ -261,10 +258,7 @@ trait Cache
                     $this->limit,
                     $this->withTrashed,
                     $this->withoutScope,
-                ],
-                JSON_THROW_ON_ERROR
-            )
-        );
+                ], JSON_THROW_ON_ERROR));
     }
 
     /**

@@ -78,15 +78,8 @@ trait Store
 
         if ($entities->count() > 0) {
             foreach ($entities as $entity) {
-                // Fire the deleted event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleting',
-                    [$this, $entity]);
-
                 // Delete the instance
                 $deleted = $entity->delete();
-
-                // Fire the deleted event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleted', [$this, $entity]);
             }
         }
 
@@ -100,7 +93,7 @@ trait Store
      * @throws JsonException
      * @throws NotFoundExceptionInterface
      */
-    public function delete($id): false|object
+    public function delete(int|string $id): false|object
     {
         $deleted = false;
 
@@ -108,12 +101,8 @@ trait Store
         $entity = $id instanceof Model ? $id : $this->find($id);
 
         if ($entity) {
-            // Fire the deleted event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleting', [$this, $entity]);
-
             // Delete the instance
             $deleted = $entity->delete();
-
             // Fire the deleted event
             $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleted', [$this, $entity]);
         }
@@ -164,7 +153,7 @@ trait Store
      * @throws NotFoundExceptionInterface
      * @throws RepositoryException
      */
-    public function update($id, array $attrs = [], bool $sync_relations = false): ?object
+    public function update(int|string $id, array $attrs = [], bool $sync_relations = false): ?object
     {
         $updated = null;
 
