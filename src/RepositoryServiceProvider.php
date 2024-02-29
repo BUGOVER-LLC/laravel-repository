@@ -8,7 +8,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use Service\Repository\Contracts\BaseRepositoryContract;
 use Service\Repository\Listeners\RepositoryEventListener;
-use Service\Repository\Repositories\BaseRepository;
+use Service\Repository\Repositories\EloquentRepository;
 
 /**
  * Class RepositoryModelProvider
@@ -31,7 +31,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/repository.php', 'repository');
 
-        $this->app->bind(BaseRepositoryContract::class, BaseRepository::class);
+        $this->app->bind(BaseRepositoryContract::class, EloquentRepository::class);
 
         // Register the event listener
         $this->app->bind('repository.listener', RepositoryEventListener::class);

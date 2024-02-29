@@ -27,7 +27,7 @@ use Service\Repository\Repositories\Repository;
  * @method distance($latitude, $longitude): self
  * @method withoutGlobalScopes($scopes = null)
  */
-interface BaseRepositoryContract extends WhereClauseContract
+interface BaseRepositoryContract
 {
     /**
      * Dynamically pass missing static methods to the model.

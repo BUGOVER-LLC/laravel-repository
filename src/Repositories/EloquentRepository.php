@@ -8,9 +8,7 @@ use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
@@ -19,11 +17,10 @@ use Service\Repository\Contracts\WhereClauseContract;
 use Service\Repository\Exceptions\EntityNotFoundException;
 use Service\Repository\Exceptions\RepositoryException;
 use Service\Repository\Traits\Clauses;
-use Service\Repository\Traits\Prepare;
-use Service\Repository\Traits\RelationsStore;
+use Service\Repository\Traits\StoreRelations;
+use Service\Repository\Traits\Store;
 
 use function func_get_args;
-use function in_array;
 use function is_array;
 
 /**
@@ -33,11 +30,11 @@ use function is_array;
  * @method  distance($latitude, $longitude)
  * @method  withoutGlobalScopes($scopes = null)
  */
-class BaseRepository extends Repository
+class EloquentRepository extends Repository implements WhereClauseContract
 {
     use Clauses;
-    use Prepare;
-    use RelationsStore;
+    use Store;
+    use StoreRelations;
 
     /**
      * @inheritDoc
@@ -113,92 +110,6 @@ class BaseRepository extends Repository
     }
 
     /**
-     * @inheritDoc
-     *
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
-     */
-    public function updateSet(array $attrs = [], bool $syncRelations = false): Collection|bool
-    {
-        $this->prepareQuery($this->model());
-
-        $entities = $this->findAll();
-
-        if (1 > $entities->count()) {
-            // empty Collection
-            return $entities;
-        }
-
-        $updated = [];
-
-        foreach ($entities as $entity) {
-            // Extract relationships
-            if ($syncRelations) {
-                $relations = $this->extractRelations($entity, $attrs);
-                Arr::forget($attrs, array_keys($relations));
-            }
-
-            // Fill instance with data
-            $entity->fill($attrs);
-
-            // Update the instance
-            $updated[] = $entity->save();
-
-            // Sync relationships
-            if ($syncRelations && isset($relations)) {
-                $this->syncRelations($entity, $relations);
-            }
-
-            if ($updated) {
-                // Fire the updated event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.updated', [$this, $entity]);
-            }
-        }
-
-        return !in_array(false, $updated, true);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param string[] $attr
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     */
-    public function findAll($attr = ['*']): Collection
-    {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->get($attr)
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param string $columns
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     */
-    public function count($columns = '*'): int
-    {
-        return (int) $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->count($columns)
-        );
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @param array $where
@@ -225,85 +136,6 @@ class BaseRepository extends Repository
     }
 
     /**
-     * @return bool
-     * @throws BindingResolutionException
-     * @throws RepositoryException
-     */
-    public function deletes(): bool
-    {
-        $deleted = false;
-
-        // Find the given instance
-        $entity = $this->createModel();
-        $entities = $this->prepareQuery($entity)->get($entity->getKeyName());
-
-        if ($entities->count() > 0) {
-            foreach ($entities as $entity) {
-                // Fire the deleted event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleting', [$this, $entity]);
-
-                // Delete the instance
-                $deleted = $entity->delete();
-
-                // Fire the deleted event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleted', [$this, $entity]);
-            }
-        }
-
-        return $deleted;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     */
-    public function delete($id): false|object
-    {
-        $deleted = false;
-
-        // Find the given instance
-        $entity = $id instanceof Model ? $id : $this->find($id);
-
-        if ($entity) {
-            // Fire the deleted event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleting', [$this, $entity]);
-
-            // Delete the instance
-            $deleted = $entity->delete();
-
-            // Fire the deleted event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleted', [$this, $entity]);
-        }
-
-        return $deleted ? $entity : $deleted;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param $id
-     * @param string[] $attrs
-     * @return object|null
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     */
-    public function find($id, $attrs = ['*']): ?object
-    {
-        return $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->find($id, $attrs)
-        );
-    }
-
-    /////////////////////////         RESET WHERE CLAUSES          /////////////////////////
-
-    /**
      * @inheritdoc
      */
     public function fullSearch($against, ...$matches): ?WhereClauseContract
@@ -324,8 +156,7 @@ class BaseRepository extends Repository
         $value = null,
         $existsColumn = '',
         string $boolean = 'and'
-    ): bool
-    {
+    ): bool {
         return $this->where($attribute, $operator, $value, $boolean)->exists($existsColumn);
     }
 
@@ -338,13 +169,15 @@ class BaseRepository extends Repository
      */
     public function exists(string $column = '*'): bool
     {
-        return (bool) $this->executeCallback(
+        return (bool)$this->executeCallback(
             static::class,
             __FUNCTION__,
             func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->exists($column)
         );
     }
+
+    /////////////////////////         RESET WHERE CLAUSES          /////////////////////////
 
     /**
      * {@inheritdoc}
@@ -369,6 +202,26 @@ class BaseRepository extends Repository
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * @param $id
+     * @param string[] $attrs
+     * @return object|null
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
+     */
+    public function find($id, $attrs = ['*']): ?object
+    {
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->find($id, $attrs)
+        );
+    }
+
+    /**
      * @inheritDoc
      *
      * @throws BindingResolutionException
@@ -384,41 +237,6 @@ class BaseRepository extends Repository
         }
 
         return $this->create($attributes, $sync_relations);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws RepositoryException
-     * @throws BindingResolutionException
-     */
-    public function create(array $attrs = [], bool $sync_relations = false): ?object
-    {
-        // Create a new instance
-        $entity = $this->createModel();
-
-        // Extract relationships
-        if ($sync_relations) {
-            $relations = $this->extractRelations($entity, $attrs);
-            Arr::forget($attrs, array_keys($relations));
-        }
-
-        // Fill instance with data
-        $entity->fill($attrs);
-
-        // Save the instance
-        $created = $entity->save();
-
-        // Sync relationships
-        if ($sync_relations && isset($relations)) {
-            $this->syncRelations($entity, $relations);
-        }
-
-        // Fire the created event
-        $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
-
-        // Return instance
-        return $created ? $entity : null;
     }
 
     /**
@@ -474,8 +292,7 @@ class BaseRepository extends Repository
         $attributes = ['*'],
         $pageName = 'page',
         $page = null
-    ): LengthAwarePaginator
-    {
+    ): LengthAwarePaginator {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         return $this->executeCallback(
@@ -503,8 +320,7 @@ class BaseRepository extends Repository
         $attributes = ['*'],
         $pageName = 'page',
         $page = null
-    ): \Illuminate\Contracts\Pagination\Paginator
-    {
+    ): \Illuminate\Contracts\Pagination\Paginator {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         return $this->executeCallback(
@@ -647,8 +463,7 @@ class BaseRepository extends Repository
         array $attrs,
         bool $sync_relations = false,
         bool $merge = false
-    ): ?object
-    {
+    ): ?object {
         $queries_chunk = array_chunk($where, 3);
 
         if (1 < count($queries_chunk)) {
@@ -682,46 +497,39 @@ class BaseRepository extends Repository
     /**
      * {@inheritdoc}
      *
+     * @param string[] $attr
+     * @return mixed
      * @throws ContainerExceptionInterface
      * @throws JsonException
      * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
      */
-    public function update($id, array $attrs = [], bool $sync_relations = false): ?object
+    public function findAll($attr = ['*']): Collection
     {
-        $updated = null;
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->get($attr)
+        );
+    }
 
-        // Find the given instance
-        $entity = $id instanceof Model ? $id : $this->find($id);
-
-        if ($entity) {
-            // Extract relationships
-            if ($sync_relations) {
-                $relations = $this->extractRelations($entity, $attrs);
-                Arr::forget($attrs, array_keys($relations));
-            }
-
-            // Fill instance with data
-            $entity->fill($attrs);
-
-            //Check if we are updating attributes values
-            $dirty = $sync_relations ? [1] : $entity->getDirty();
-
-            // Update the instance
-            $updated = $entity->save();
-
-            // Sync relationships
-            if ($sync_relations && isset($relations)) {
-                $this->syncRelations($entity, $relations);
-            }
-
-            if (count($dirty) > 0) {
-                // Fire the updated event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.updated', [$this, $entity]);
-            }
-        }
-
-        return $updated ? $entity : $updated;
+    /**
+     * {@inheritdoc}
+     *
+     * @param string $columns
+     * @return int
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
+     */
+    public function count($columns = '*'): int
+    {
+        return (int)$this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->count($columns)
+        );
     }
 
     /**
@@ -772,57 +580,6 @@ class BaseRepository extends Repository
         }
 
         return $result;
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
-     */
-    public function insert($values): bool
-    {
-        // Create a new instance
-        $entity = $this->createModel();
-
-        $inserted = $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->insert($values)
-        );
-
-        // Fire the created event
-        $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
-
-        return $inserted;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function restore($id)
-    {
-        $restored = false;
-
-        // Find the given instance
-        $entity = $id instanceof Model ? $id : $this->withTrashed()->find($id);
-
-        if ($entity) {
-            // Fire the restoring event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.restoring', [$this, $entity]);
-
-            // Restore the instance
-            $restored = $entity->restore();
-
-            // Fire the restored event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.restored', [$this, $entity]);
-        }
-
-        return $restored ? $entity : $restored;
     }
 
     /**
@@ -898,7 +655,11 @@ class BaseRepository extends Repository
     /**
      * {@inheritdoc}
      *
+     * @param $column
+     * @return mixed
+     * @throws ContainerExceptionInterface
      * @throws JsonException
+     * @throws NotFoundExceptionInterface
      */
     public function avg($column)
     {

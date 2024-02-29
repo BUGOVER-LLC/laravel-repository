@@ -17,6 +17,7 @@ use Service\Repository\Exceptions\CriteriaException;
 use Service\Repository\Exceptions\RepositoryException;
 
 use function call_user_func_array;
+use function count;
 use function get_class;
 use function is_array;
 use function is_object;
@@ -34,12 +35,14 @@ trait Criteria
      * @var array
      */
     protected array $criteria = [];
+
     /**
      * List of default repository criteria.
      *
      * @var array
      */
     protected array $defaultCriteria = [];
+
     /**
      * Skip criteria flag.
      * If setted to true criteria will not be apply to the query.
@@ -47,6 +50,7 @@ trait Criteria
      * @var bool
      */
     protected bool $skipCriteria = false;
+
     /**
      * Skip default criteria flag.
      * If setted to true default criteria will not be added to the criteria list.

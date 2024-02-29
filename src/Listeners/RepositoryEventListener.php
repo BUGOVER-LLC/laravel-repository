@@ -31,16 +31,16 @@ class RepositoryEventListener
      * Listen to entities created.
      *
      * @param string $event_name
-     * @param array $data
+     * @param array $entities
      *
      * @return void
      */
-    public function entityCreated(string $event_name, array $data): void
+    public function entityCreated(string $event_name, array $entities): void
     {
-        $clear_on = $data[0]->getContainer('config')->get('repository.cache.clear_on');
+        $clear_on = $entities[0]->getContainer('config')->get('repository.cache.clear_on');
 
-        if ($data[0]->isCacheClearEnabled() && in_array('create', $clear_on, true)) {
-            $data[0]->forgetCache();
+        if ($entities[0]->isCacheClearEnabled() && in_array('create', $clear_on, true)) {
+            $entities[0]->forgetCache();
         }
     }
 
@@ -48,16 +48,16 @@ class RepositoryEventListener
      * Listen to entities updated.
      *
      * @param string $event_name
-     * @param array $data
+     * @param array $entities
      *
      * @return void
      */
-    public function entityUpdated(string $event_name, array $data): void
+    public function entityUpdated(string $event_name, array $entities): void
     {
-        $clear_on = $data[0]->getContainer('config')->get('repository.cache.clear_on');
+        $clear_on = $entities[0]->getContainer('config')->get('repository.cache.clear_on');
 
-        if ($data[0]->isCacheClearEnabled() && in_array('update', $clear_on, true)) {
-            $data[0]->forgetCache();
+        if ($entities[0]->isCacheClearEnabled() && in_array('update', $clear_on, true)) {
+            $entities[0]->forgetCache();
         }
     }
 
@@ -65,16 +65,16 @@ class RepositoryEventListener
      * Listen to entities deleted.
      *
      * @param string $event_name
-     * @param array $data
+     * @param array $entities
      *
      * @return void
      */
-    public function entityDeleted(string $event_name, array $data): void
+    public function entityDeleted(string $event_name, array $entities): void
     {
-        $clear_on = $data[0]->getContainer('config')->get('repository.cache.clear_on');
+        $clear_on = $entities[0]->getContainer('config')->get('repository.cache.clear_on');
 
-        if ($data[0]->isCacheClearEnabled() && in_array('delete', $clear_on, true)) {
-            $data[0]->forgetCache();
+        if ($entities[0]->isCacheClearEnabled() && in_array('delete', $clear_on, true)) {
+            $entities[0]->forgetCache();
         }
     }
 }

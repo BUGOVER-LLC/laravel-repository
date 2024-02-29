@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Service\Repository\Exceptions\RepositoryException;
 
-trait RelationsStore
+trait StoreRelations
 {
     /**
      * Extract relationships.

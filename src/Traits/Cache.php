@@ -63,6 +63,7 @@ trait Cache
     /**
      * {@inheritdoc}
      *
+     * called on created update or deleted
      * @return Cache|Repository
      * @throws ContainerExceptionInterface
      * @throws JsonException
@@ -74,8 +75,8 @@ trait Cache
             if (method_exists($this->getContainer('cache')->getStore(), 'tags')) {
                 $this->getContainer('cache')->tags($this->getRepositoryId())->flush();
             } else {
-                foreach ($this->flushCacheKeys() as $cacheKey) {
-                    $this->getContainer('cache')->forget($cacheKey);
+                foreach ($this->flushCacheKeys() as $cache_key) {
+                    $this->getContainer('cache')->forget($cache_key);
                 }
             }
 
@@ -111,23 +112,23 @@ trait Cache
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function flushCacheKeys(): array
+    private function flushCacheKeys(): array
     {
-        $flushedKeys = [];
-        $calledClass = static::class;
+        $flushed_keys = [];
+        $called_class = static::class;
         $config = $this->getContainer('config')->get('repository.cache');
-        $cacheKeys = $this->getCacheKeys($config['keys_file']);
+        $cache_keys = $this->getCacheKeys($config['keys_file']);
 
-        if (isset($cacheKeys[$calledClass]) && is_array($cacheKeys[$calledClass])) {
-            foreach ($cacheKeys[$calledClass] as $cacheKey) {
-                $flushedKeys[] = $calledClass . '@' . $cacheKey;
+        if (isset($cache_keys[$called_class]) && is_array($cache_keys[$called_class])) {
+            foreach ($cache_keys[$called_class] as $cache_key) {
+                $flushed_keys[] = $called_class . '@' . $cache_key;
             }
 
-            unset($cacheKeys[$calledClass]);
-            file_put_contents($config['keys_file'], json_encode($cacheKeys, JSON_THROW_ON_ERROR));
+            unset($cache_keys[$called_class]);
+            file_put_contents($config['keys_file'], json_encode($cache_keys, JSON_THROW_ON_ERROR));
         }
 
-        return $flushedKeys;
+        return $flushed_keys;
     }
 
     /**
@@ -147,7 +148,7 @@ trait Cache
     }
 
     /**
-     * Cache given callback.
+     * Cache given callback. Called when get data
      *
      * @param string $class
      * @param string $method
@@ -298,12 +299,12 @@ trait Cache
      */
     protected function storeCacheKeys(string $class, string $method, string $hash): void
     {
-        $keysFile = $this->getContainer('config')->get('repository.cache.keys_file');
-        $cacheKeys = $this->getCacheKeys($keysFile);
+        $keys_file = $this->getContainer('config')->get('repository.cache.keys_file');
+        $cache_keys = $this->getCacheKeys($keys_file);
 
-        if (!isset($cacheKeys[$class]) || !in_array($method . '.' . $hash, $cacheKeys[$class], true)) {
-            $cacheKeys[$class][] = $method . '.' . $hash;
-            file_put_contents($keysFile, json_encode($cacheKeys, JSON_THROW_ON_ERROR));
+        if (!isset($cache_keys[$class]) || !in_array($method . '.' . $hash, $cache_keys[$class], true)) {
+            $cache_keys[$class][] = $method . '.' . $hash;
+            file_put_contents($keys_file, json_encode($cache_keys, JSON_THROW_ON_ERROR));
         }
     }
 
