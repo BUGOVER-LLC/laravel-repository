@@ -23,215 +23,215 @@ trait Clauses
      *
      * @var array
      */
-    private array $relations = [];
+    protected array $relations = [];
     /**
      * The relations to eager load on query execution.
      *
      * @var array
      */
-    private array $join = [];
+    protected array $join = [];
     /**
      * The query where clauses.
      *
      * @var array
      */
-    private array $where = [];
+    protected array $where = [];
     /**
      * The query where clauses.
      *
      * @var array
      */
-    private array $orWhere = [];
+    protected array $orWhere = [];
     /**
      * The query whereIn clauses.
      *
      * @var array
      */
-    private array $whereIn = [];
+    protected array $whereIn = [];
     /**
      * The query whereNotIn clauses.
      *
      * @var array
      */
-    private array $whereNotIn = [];
+    protected array $whereNotIn = [];
     /**
      * The query whereHas clauses.
      *
      * @var array
      */
-    private array $whereHas = [];
+    protected array $whereHas = [];
     /**
      * The query scopes.
      *
      * @var array
      */
-    private array $scopes = [];
+    protected array $scopes = [];
     /**
      * The column to order results by.
      *
      * @var array
      */
-    private array $orderBy = [];
+    protected array $orderBy = [];
     /**
      * The column to order results by.
      *
      * @var array
      */
-    private array $groupBy = [];
+    protected array $groupBy = [];
     /**
      * The query having clauses.
      *
      * @var array
      */
-    private array $having = [];
+    protected array $having = [];
     /**
      * @var array
      */
-    private array $whereJson = [];
+    protected array $whereJson = [];
     /**
      * @var array
      */
-    private array $whereExists = [];
+    protected array $whereExists = [];
     /**
      * @var array
      */
-    private array $whereJsonNotIn = [];
+    protected array $whereJsonNotIn = [];
     /**
      * @var array
      */
-    private array $orWhereJson = [];
+    protected array $orWhereJson = [];
     /**
      * @var array
      */
-    private array $whereJsonCount = [];
+    protected array $whereJsonCount = [];
     /**
      * @var array
      */
-    private array $when = [];
+    protected array $when = [];
     /**
      * @var array
      */
-    private array $has = [];
+    protected array $has = [];
     /**
      * @var array
      */
-    private array $orHas = [];
+    protected array $orHas = [];
     /**
      * @var array
      */
-    private array $orWhereHas = [];
+    protected array $orWhereHas = [];
     /**
      * @var array
      */
-    private array $whereDoesntHave = [];
+    protected array $whereDoesntHave = [];
     /**
      * @var array
      */
-    private array $orWhereDoesntHave = [];
+    protected array $orWhereDoesntHave = [];
     /**
      * @var array
      */
-    private array $hasMorph = [];
+    protected array $hasMorph = [];
     /**
      * @var array
      */
-    private array $whereHasMorph = [];
+    protected array $whereHasMorph = [];
     /**
      * @var array
      */
-    private array $whereBetween = [];
+    protected array $whereBetween = [];
     /**
      * @var array
      */
-    private array $orWhereBetween = [];
+    protected array $orWhereBetween = [];
     /**
      * @var array
      */
-    private array $whereNotBetween = [];
+    protected array $whereNotBetween = [];
     /**
      * @var array
      */
-    private array $whereDate = [];
+    protected array $whereDate = [];
     /**
      * @var array
      */
-    private array $whereMonth = [];
+    protected array $whereMonth = [];
     /**
      * @var array
      */
-    private array $whereDay = [];
+    protected array $whereDay = [];
     /**
      * @var array
      */
-    private array $whereTime = [];
+    protected array $whereTime = [];
     /**
      * @var array
      */
-    private array $withCount = [];
+    protected array $withCount = [];
     /**
      * @var array
      */
-    private array $withSum = [];
+    protected array $withSum = [];
     /**
      * @var array
      */
-    private array $withAvg = [];
+    protected array $withAvg = [];
     /**
      * @var array
      */
-    private array $withMax = [];
+    protected array $withMax = [];
     /**
      * @var array
      */
-    private array $withMin = [];
+    protected array $withMin = [];
     /**
      * @var array
      */
-    private array $withExists = [];
+    protected array $withExists = [];
     /**
      * @var array
      */
-    private array $doesntHave = [];
+    protected array $doesntHave = [];
     /**
      * @var array
      */
-    private array $orDoesntHave = [];
+    protected array $orDoesntHave = [];
     /**
      * @var array
      */
-    private array $whereRaw = [];
+    protected array $whereRaw = [];
     /**
      * @var array
      */
-    private array $orWhereRaw = [];
+    protected array $orWhereRaw = [];
     /**
      * @var array
      */
-    private array $havingRaw = [];
+    protected array $havingRaw = [];
     /**
      * @var array
      */
-    private array $except = [];
+    protected array $except = [];
     /**
      * @var bool
      */
-    private bool $withTrashed = false;
+    protected bool $withTrashed = false;
     /**
      * @var bool
      */
-    private bool $withoutScope = false;
+    protected bool $withoutScope = false;
     /**
      * The "offset" value of the query.
      *
      * @var int|string|null
      */
-    private null|int|string $offset = null;
+    protected null|int|string $offset = null;
     /**
      * The "limit" value of the query.
      *
      * @var int|string|null
      */
-    private null|int|string $limit = null;
+    protected null|int|string $limit = null;
 
     /**
      * @inheritdoc
