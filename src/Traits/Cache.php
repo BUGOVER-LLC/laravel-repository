@@ -156,9 +156,6 @@ trait Cache
      * @param Closure $closure
      *
      * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     protected function cacheCallback(string $class, string $method, array $args, Closure $closure): mixed
     {
@@ -202,63 +199,69 @@ trait Cache
      * @param array $args
      *
      * @return string
-     * @throws JsonException
      */
     protected function generateCacheHash(array $args): string
     {
-        return md5(json_encode($args + [
-                $this->getRepositoryId(),
-                $this->getModel(),
-                $this->getCacheDriver(),
-                $this->getCacheLifetime(),
-                $this->whereJson,
-                $this->whereExists,
-                $this->whereJsonNotIn,
-                $this->orWhereJson,
-                $this->whereJsonCount,
-                $this->when,
-                $this->has,
-                $this->orHas,
-                $this->orWhereHas,
-                $this->doesntHave,
-                $this->orDoesntHave,
-                $this->whereDoesntHave,
-                $this->orWhereDoesntHave,
-                $this->hasMorph,
-                $this->whereHasMorph,
-                $this->whereBetween,
-                $this->orWhereBetween,
-                $this->whereNotBetween,
-                $this->whereDate,
-                $this->whereMonth,
-                $this->whereDay,
-                $this->whereTime,
-                $this->withCount,
-                $this->withExists,
-                $this->withMax,
-                $this->withMin,
-                $this->withAvg,
-                $this->withSum,
-                $this->whereRaw,
-                $this->orWhereRaw,
-                $this->except,
-                $this->relations,
-                $this->where,
-                $this->orWhere,
-                $this->whereIn,
-                $this->whereNotIn,
-                $this->whereHas,
-                $this->scopes,
-                $this->orderBy,
-                $this->groupBy,
-                $this->having,
-                $this->havingRaw,
-                $this->join,
-                $this->offset,
-                $this->limit,
-                $this->withTrashed,
-                $this->withoutScope,
-            ], JSON_THROW_ON_ERROR));
+        $salts = [
+            $this->getRepositoryId(),
+            $this->getModel(),
+            $this->getCacheDriver(),
+            $this->getCacheLifetime(),
+            $this->whereJson,
+            $this->whereExists,
+            $this->whereJsonNotIn,
+            $this->orWhereJson,
+            $this->whereJsonCount,
+            $this->when,
+            $this->has,
+            $this->orHas,
+            $this->orWhereHas,
+            $this->doesntHave,
+            $this->orDoesntHave,
+            $this->whereDoesntHave,
+            $this->orWhereDoesntHave,
+            $this->hasMorph,
+            $this->whereHasMorph,
+            $this->whereBetween,
+            $this->orWhereBetween,
+            $this->whereNotBetween,
+            $this->whereDate,
+            $this->whereMonth,
+            $this->whereDay,
+            $this->whereTime,
+            $this->withCount,
+            $this->withExists,
+            $this->withMax,
+            $this->withMin,
+            $this->withAvg,
+            $this->withSum,
+            $this->whereRaw,
+            $this->orWhereRaw,
+            $this->except,
+            $this->relations,
+            $this->where,
+            $this->orWhere,
+            $this->whereIn,
+            $this->whereNotIn,
+            $this->whereHas,
+            $this->scopes,
+            $this->orderBy,
+            $this->groupBy,
+            $this->having,
+            $this->havingRaw,
+            $this->join,
+            $this->offset,
+            $this->limit,
+            $this->withTrashed,
+            $this->withoutScope,
+        ];
+
+        try {
+            $hash = md5(json_encode($args + $salts, JSON_THROW_ON_ERROR));
+        } catch (JsonException) {
+        }
+
+        return $hash;
     }
 
     /**
@@ -287,18 +290,17 @@ trait Cache
      * @param string $hash
      *
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     protected function storeCacheKeys(string $class, string $method, string $hash): void
     {
-        $keys_file = $this->getContainer('config')->get('repository.cache.keys_file');
-        $cache_keys = $this->getCacheKeys($keys_file);
-
-        if (!isset($cache_keys[$class]) || !in_array($method . '.' . $hash, $cache_keys[$class], true)) {
-            $cache_keys[$class][] = $method . '.' . $hash;
-            file_put_contents($keys_file, json_encode($cache_keys, JSON_THROW_ON_ERROR));
+        try {
+            $keys_file = $this->getContainer('config')->get('repository.cache.keys_file');
+            $cache_keys = $this->getCacheKeys($keys_file);
+            if (!isset($cache_keys[$class]) || !in_array($method . '.' . $hash, $cache_keys[$class], true)) {
+                $cache_keys[$class][] = $method . '.' . $hash;
+                file_put_contents($keys_file, json_encode($cache_keys, JSON_THROW_ON_ERROR));
+            }
+        } catch (ContainerExceptionInterface|NotFoundExceptionInterface|JsonException) {
         }
     }
 
