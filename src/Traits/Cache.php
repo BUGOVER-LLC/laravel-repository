@@ -61,13 +61,7 @@ trait Cache
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * called on created update or deleted
-     * @return Cache|Repository
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @return Repository|Cache
      */
     public function forgetCache(): self
     {
@@ -87,11 +81,14 @@ trait Cache
     }
 
     /**
-     * {@inheritdoc}
+     * @return int|null
      */
     public function getCacheLifetime(): ?int
     {
-        return $this->cacheLifetime ?? $this->getContainer('config')->get('repository.cache.lifetime');
+        try {
+            return $this->cacheLifetime ?? $this->getContainer('config')->get('repository.cache.lifetime');
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {
+        }
     }
 
     /**
@@ -197,7 +194,6 @@ trait Cache
      * Generate unique query hash.
      *
      * @param array $args
-     *
      * @return string
      */
     protected function generateCacheHash(array $args): string

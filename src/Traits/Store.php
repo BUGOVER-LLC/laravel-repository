@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Service\Repository\Traits;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -66,26 +65,27 @@ trait Store
     }
 
     /**
-     * @return bool
-     * @throws BindingResolutionException
-     * @throws RepositoryException
+     * @inheritDoc
      */
-    public function deletes(): bool
+    public function deletes(): ?bool
     {
-        $deleted = false;
-
         // Find the given instance
         $entity = $this->createModel();
-        $entities = $this->prepareQuery($entity)->get($entity->getKeyName());
+        $result = $this->prepareQuery($entity)->get($entity->getKeyName());
+        $count = $result->count();
 
-        if ($entities->count() > 0) {
-            foreach ($entities as $entity) {
+        if (!$count) {
+            $deleted = null;
+        } elseif (1 < $count) {
+            foreach ($result as $entity) {
                 // Delete the instance
                 $deleted = $entity->delete();
             }
+        } else {
+            $deleted = $result[0]->delete();
         }
 
-        return $deleted;
+        return $deleted ?? null;
     }
 
     /**

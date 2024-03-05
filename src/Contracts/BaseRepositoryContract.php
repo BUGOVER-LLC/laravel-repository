@@ -129,9 +129,10 @@ interface BaseRepositoryContract
     /**
      * Update an entity with the given attributes.
      *
-     * @return bool
+     * @return bool|null
+     * @throws RepositoryException
      */
-    public function deletes(): bool;
+    public function deletes(): ?bool;
 
     /**
      * @param $values
