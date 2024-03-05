@@ -250,22 +250,6 @@ interface WhereClauseContract
     public function withTrashed(): static;
 
     /**
-     * @param $attribute
-     * @param null $operator
-     * @param null $value
-     * @param string $exists_column
-     * @param string $boolean
-     * @return bool
-     */
-    public function whereExistsExist(
-        $attribute,
-        $operator = null,
-        $value = null,
-        string $exists_column = '',
-        string $boolean = 'and'
-    ): bool;
-
-    /**
      * @param $callback
      * @param string $boolean
      * @param bool $not

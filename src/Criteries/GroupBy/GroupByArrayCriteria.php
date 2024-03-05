@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Service\Repository\Criteries\GroupBy;
 
 use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
 
 use function is_array;
 
@@ -37,10 +37,10 @@ class GroupByArrayCriteria implements BaseCriteriaContract
 
     /**
      * @param mixed $query
-     * @param BaseRepositoryContract $repository
+     * @param EloquentRepositoryContract $repository
      * @return mixed
      */
-    public function apply($query, BaseRepositoryContract $repository)
+    public function apply($query, EloquentRepositoryContract $repository)
     {
         $q = null;
 

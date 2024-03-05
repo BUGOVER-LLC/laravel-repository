@@ -12,6 +12,7 @@ use Illuminate\Pagination\Paginator;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Service\Repository\Contracts\EloquentRepositoryContract;
 use Service\Repository\Contracts\WhereClauseContract;
 use Service\Repository\Exceptions\EntityNotFoundException;
 use Service\Repository\Exceptions\RepositoryException;
@@ -31,7 +32,7 @@ use function is_array;
  * @method  distance($latitude, $longitude)
  * @method  withoutGlobalScopes($scopes = null)
  */
-class EloquentRepository extends Repository implements WhereClauseContract
+class EloquentRepository extends Repository implements WhereClauseContract, EloquentRepositoryContract
 {
     use Prepare;
     use Clauses;

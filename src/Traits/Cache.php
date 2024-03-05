@@ -17,7 +17,6 @@ use function is_array;
  * Trait Cache
  *
  * @package Service\Repository\Traits
- * @method resetRepository()
  */
 trait Cache
 {
@@ -62,6 +61,9 @@ trait Cache
 
     /**
      * @return Repository|Cache
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
      */
     public function forgetCache(): self
     {

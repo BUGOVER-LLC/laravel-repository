@@ -15,9 +15,9 @@ interface BaseCriteriaContract
      * Apply current criterion to the given query and return query.
      *
      * @param mixed $query
-     * @param BaseRepositoryContract $repository
+     * @param EloquentRepositoryContract $repository
      *
      * @return mixed
      */
-    public function apply($query, BaseRepositoryContract $repository): mixed;
+    public function apply($query, EloquentRepositoryContract $repository): mixed;
 }

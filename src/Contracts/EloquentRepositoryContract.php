@@ -7,7 +7,6 @@ namespace Service\Repository\Contracts;
 use Closure;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,7 +17,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RuntimeException;
 use Service\Repository\Exceptions\RepositoryException;
-use Service\Repository\Repositories\Repository;
 
 /**
  * Interface BaseRepositoryContract
@@ -30,52 +28,8 @@ use Service\Repository\Repositories\Repository;
  * @method distance($latitude, $longitude): self
  * @method withoutGlobalScopes($scopes = null)
  */
-interface BaseRepositoryContract
+interface EloquentRepositoryContract
 {
-    /**
-     * Dynamically pass missing static methods to the model.
-     *
-     * @param $method
-     * @param $parameters
-     *
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters);
-
-    /**
-     * @param array $attributes
-     * @return Model
-     */
-    public function model($attributes = []): Model;
-
-    /**
-     * Get Model fillable array
-     *
-     * @return array
-     */
-    public function getFillable(): array;
-
-    /**
-     * Get Searchable Fields
-     *
-     * @return array
-     */
-    public function getFieldsSearchable(): array;
-
-    /**
-     * Get Model primary key name
-     *
-     * @return Model Primary Key Name
-     */
-    public function getKeyName(): ?string;
-
-    /**
-     * Get Model primary key name
-     *
-     * @return Model Primary Key Name
-     */
-    public function getTable(): ?string;
-
     /**
      * Retrieve the "count" result of the query.
      *
@@ -83,6 +37,22 @@ interface BaseRepositoryContract
      * @return bool
      */
     public function exists(string $column = '*'): bool;
+
+    /**
+     * @param $attribute
+     * @param null $operator
+     * @param null $value
+     * @param string $exists_column
+     * @param string $boolean
+     * @return bool
+     */
+    public function whereExistsExist(
+        $attribute,
+        $operator = null,
+        $value = null,
+        string $exists_column = '',
+        string $boolean = 'and'
+    ): bool;
 
     /**
      * @param string $where
@@ -156,87 +126,6 @@ interface BaseRepositoryContract
      * @return object|null
      */
     public function firstWhere(array $where, $attributes = ['*']): ?object;
-
-    /**
-     * Set the IoC container instance.
-     *
-     * @param Container $container
-     *
-     * @return static
-     */
-    public function setContainer(Container $container);
-
-    /**
-     * Get the IoC container instance or any of its services.
-     *
-     * @param string|null $service
-     *
-     * @return mixed
-     */
-    public function getContainer($service = null);
-
-    /**
-     * Set the connection associated with the repository.
-     *
-     * @param string $name
-     *
-     * @return static
-     */
-    public function setConnection($name);
-
-    /**
-     * Get the current connection for the repository.
-     *
-     * @return string
-     */
-    public function getConnection(): string;
-
-    /**
-     * Set the repository identifier.
-     *
-     * @param string $repositoryId
-     *
-     * @return static
-     */
-    public function setRepositoryId($repositoryId): Repository|BaseRepositoryContract|static;
-
-    /**
-     * Get the repository identifier.
-     *
-     * @return string
-     */
-    public function getRepositoryId(): string;
-
-    /**
-     * Set the repository model.
-     *
-     * @param string $model
-     *
-     * @return static
-     */
-    public function setModel($model): static;
-
-    /**
-     * Get the repository model.
-     *
-     * @return string
-     */
-    public function getModel(): string;
-
-    /**
-     * Get the repository model.
-     *
-     * @return string|null
-     */
-    public function getMap(): ?string;
-
-    /**
-     * Create a new repository model instance.
-     *
-     * @return Model
-     * @throws RepositoryException
-     */
-    public function createModel(): Model;
 
     /**
      * Set the relationships that should be eager loaded.
@@ -466,7 +355,7 @@ interface BaseRepositoryContract
      *
      * @return mixed
      */
-    public function restore($id);
+    public function restore(int|string $id);
 
     /**
      * Start a new database transaction.
@@ -532,14 +421,4 @@ interface BaseRepositoryContract
      * @return mixed
      */
     public function sum(string $column): mixed;
-
-    /**
-     * Dynamically pass missing methods to the model.
-     *
-     * @param string $method
-     * @param array $parameters
-     *
-     * @return mixed
-     */
-    public function __call(string $method, array $parameters);
 }

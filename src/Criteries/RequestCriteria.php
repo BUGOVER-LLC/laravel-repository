@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
 
 use function in_array;
 use function is_string;
@@ -42,12 +42,12 @@ class RequestCriteria implements BaseCriteriaContract
      * Apply criteria in query repository
      *
      * @param Builder|Model $model
-     * @param BaseRepositoryContract $repository
+     * @param EloquentRepositoryContract $repository
      *
      * @return Builder|Model
      * @throws Exception
      */
-    public function apply($model, BaseRepositoryContract $repository): Model|Builder
+    public function apply($model, EloquentRepositoryContract $repository): Model|Builder
     {
         $fields_searchable = $repository->getFieldsSearchable();
         $search = $this->request->get(config('repository.criteria.params.search', 'search'), null);

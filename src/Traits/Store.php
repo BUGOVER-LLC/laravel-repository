@@ -207,9 +207,9 @@ trait Store
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function restore($id)
+    public function restore(int|string $id)
     {
         $restored = false;
 

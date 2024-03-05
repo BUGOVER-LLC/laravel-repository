@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
 use ReflectionException;
 use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
 use Service\Repository\Exceptions\CriteriaException;
 use Service\Repository\Exceptions\RepositoryException;
 
@@ -348,10 +348,10 @@ trait Criteria
      * Apply criteria list to the given query.
      *
      * @param Model|Builder $queryModel
-     * @param BaseRepositoryContract $repository
+     * @param EloquentRepositoryContract $repository
      * @return Builder|Model
      */
-    public function applyCriteria(Model|Builder $queryModel, BaseRepositoryContract $repository): Model|Builder
+    public function applyCriteria(Model|Builder $queryModel, EloquentRepositoryContract $repository): Model|Builder
     {
         foreach ($this->getCriteria() as $criterion) {
             if ($criterion instanceof BaseCriteriaContract) {

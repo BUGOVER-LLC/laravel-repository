@@ -6,7 +6,7 @@ namespace Service\Repository\Criteries\Search;
 
 use Illuminate\Database\Eloquent\Builder;
 use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
 
 /**
  * Class SearchCriteria
@@ -39,10 +39,10 @@ class SearchCriteria implements BaseCriteriaContract
 
     /**
      * @param mixed $query
-     * @param BaseRepositoryContract $repository
+     * @param EloquentRepositoryContract $repository
      * @return mixed
      */
-    public function apply($query, BaseRepositoryContract $repository)
+    public function apply($query, EloquentRepositoryContract $repository)
     {
         $i = 0;
 

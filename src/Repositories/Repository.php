@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Service\Repository\Contracts\BaseCacheContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
+use Service\Repository\Contracts\RepositoryContract;
 use Service\Repository\Exceptions\RepositoryException;
 use Service\Repository\Traits\Cache;
 use Service\Repository\Traits\Criteria;
@@ -73,7 +74,7 @@ use function is_string;
  * @property bool $withTrashed
  * @property bool $withoutScope
  */
-abstract class Repository implements BaseRepositoryContract, BaseCacheContract
+abstract class Repository implements RepositoryContract, BaseCacheContract
 {
     use Cache;
     use Criteria;
@@ -121,7 +122,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     /**
      * {@inheritdoc}
      */
-    public function setConnection($name): Repository|BaseRepositoryContract|static
+    public function setConnection($name): Repository|EloquentRepositoryContract|static
     {
         $this->connection = $name;
 
@@ -139,7 +140,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     /**
      * {@inheritdoc}
      */
-    public function setRepositoryId($repositoryId): Repository|BaseRepositoryContract|static
+    public function setRepositoryId($repositoryId): Repository|EloquentRepositoryContract|static
     {
         $this->repositoryId = $repositoryId;
 
@@ -270,7 +271,7 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     }
 
     /**
-     * @return string
+     * @return string|null
      * @throws RepositoryException
      */
     public function getMap(): ?string

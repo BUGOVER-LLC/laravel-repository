@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Service\Repository\Criteries\Where;
 
 use Service\Repository\Contracts\BaseCriteriaContract;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
 
 /**
  * Class OrWhereCriteria
@@ -43,10 +43,10 @@ class OrWhereCriteria implements BaseCriteriaContract
 
     /**
      * @param mixed $query
-     * @param BaseRepositoryContract $repository
+     * @param EloquentRepositoryContract $repository
      * @return mixed
      */
-    public function apply($query, BaseRepositoryContract $repository)
+    public function apply($query, EloquentRepositoryContract $repository)
     {
         return $query->orWhere($this->attribute, $this->sign, $this->value);
     }

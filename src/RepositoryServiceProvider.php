@@ -6,9 +6,11 @@ namespace Service\Repository;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
-use Service\Repository\Contracts\BaseRepositoryContract;
+use Service\Repository\Contracts\EloquentRepositoryContract;
+use Service\Repository\Contracts\RepositoryContract;
 use Service\Repository\Listeners\RepositoryEventListener;
 use Service\Repository\Repositories\EloquentRepository;
+use Service\Repository\Repositories\Repository;
 
 /**
  * Class RepositoryModelProvider
@@ -18,20 +20,14 @@ use Service\Repository\Repositories\EloquentRepository;
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * The repository alias pattern.
-     *
-     * @var string
-     */
-    protected string $repositoryAliasPattern = '{{class}}Contract';
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/repository.php', 'repository');
 
-        $this->app->bind(BaseRepositoryContract::class, EloquentRepository::class);
+        $this->app->bind(EloquentRepositoryContract::class, EloquentRepository::class);
+        $this->app->bind(RepositoryContract::class, Repository::class);
 
         // Register the event listener
         $this->app->bind('repository.listener', RepositoryEventListener::class);
