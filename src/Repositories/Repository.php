@@ -8,7 +8,6 @@ use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\Model;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Service\Repository\Contracts\BaseCacheContract;
@@ -149,17 +148,18 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
 
     /**
      * {@inheritdoc}
-     *
-     * @throws RepositoryException|BindingResolutionException
      */
-    public function createModel()
+    public function createModel(): Model
     {
         if (is_string($entity = $this->getModel())) {
             if (!class_exists($class = '\\' . ltrim($entity, '\\'))) {
                 throw new RepositoryException("Class {$entity} does NOT exist!");
             }
 
-            $entity = $this->getContainer()->make($class);
+            try {
+                $entity = $this->getContainer()->make($class);
+            } catch (BindingResolutionException) {
+            }
         }
 
         // Set the connection used by the model
@@ -177,11 +177,14 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getModel(): string
     {
-        $entity = $this->getContainer('config')->get('repository.models');
+        try {
+            $entity = $this->getContainer('config')->get('repository.models');
+        } catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
+        }
 
         return $this->model ?: str_replace(['Repositories', 'Repository'], [$entity, ''], static::class);
     }
@@ -297,25 +300,24 @@ abstract class Repository implements BaseRepositoryContract, BaseCacheContract
      * @param Closure $closure
      *
      * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     protected function executeCallback(string $class, string $method, array $args, Closure $closure): mixed
     {
-        $skip_uri = $this->getContainer('config')->get('repository.cache.skip_uri');
+        try {
+            $skip_uri = $this->getContainer('config')->get('repository.cache.skip_uri');
 
-        // Check if cache is enabled
-        if ($this->getCacheLifetime() && !$this->getContainer('request')->has($skip_uri)) {
-            return $this->cacheCallback($class, $method, $args, $closure);
+            // Check if cache is enabled
+            if ($this->getCacheLifetime() && !$this->getContainer('request')->has($skip_uri)) {
+                return $this->cacheCallback($class, $method, $args, $closure);
+            }
+
+            // Cache disabled, just execute query & return result
+            /**
+             * @noinspection VariableFunctionsUsageInspection
+             */
+            $result = call_user_func($closure);
+        } catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
         }
-
-        // Cache disabled, just execute query & return result
-        /**
-         * @noinspection VariableFunctionsUsageInspection
-         */
-        $result = call_user_func($closure);
-
         // We're done, let's clean up!
         $this->resetRepository();
 

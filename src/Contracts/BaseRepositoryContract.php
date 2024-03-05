@@ -6,13 +6,16 @@ namespace Service\Repository\Contracts;
 
 use Closure;
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use InvalidArgumentException;
+use JsonException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use RuntimeException;
 use Service\Repository\Exceptions\RepositoryException;
 use Service\Repository\Repositories\Repository;
@@ -82,11 +85,11 @@ interface BaseRepositoryContract
     public function exists(string $column = '*'): bool;
 
     /**
-     * @param $where
+     * @param string $where
      * @param array $values
      * @return bool|null
      */
-    public function deletesBy($where, array $values = []): ?bool;
+    public function deletesBy(string $where, array $values = []): ?bool;
 
     /**
      * @param null $column
@@ -141,7 +144,7 @@ interface BaseRepositoryContract
      * @param mixed ...$matches
      * @return null|WhereClauseContract
      */
-    public function fullSearch($against, ...$matches): null|WhereClauseContract;
+    public function fullSearch($against, ...$matches): ?static;
 
     /**
      * Find all entities matching where conditions.
@@ -229,10 +232,10 @@ interface BaseRepositoryContract
     /**
      * Create a new repository model instance.
      *
-     * @return mixed
+     * @return Model
      * @throws RepositoryException
      */
-    public function createModel();
+    public function createModel(): Model;
 
     /**
      * Set the relationships that should be eager loaded.
@@ -246,11 +249,11 @@ interface BaseRepositoryContract
     /**
      * Find an entity by its primary key.
      *
-     * @param int $id
+     * @param int|string $id
      * @param string[] $attrs
      * @return object|null
      */
-    public function find($id, $attrs = ['*']): ?object;
+    public function find(int|string $id, $attrs = ['*']): ?object;
 
     /**
      * Find an entity by its primary key or throw an exception.
@@ -266,10 +269,12 @@ interface BaseRepositoryContract
     /**
      * Find an entity by its primary key or return fresh entity instance.
      *
-     * @param mixed $id
+     * @param int $id
      * @param array $attributes
      * @param bool $sync_relations
-     * @return object|null
+     * @return Model|mixed
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function findOrNew(int $id, array $attributes = ['*'], bool $sync_relations = false): ?object;
 
@@ -277,18 +282,16 @@ interface BaseRepositoryContract
      * Find an entity by one of its attributes.
      *
      * @param string $attribute
-     * @param string $value
+     * @param mixed $value
      * @param array $attributes
-     *
      * @return object|null
      */
-    public function findBy($attribute, $value, $attributes = ['*']): object|null;
+    public function findBy(string $attribute, mixed $value, array $attributes = ['*']): object|null;
 
     /**
      * Find the first entity.
      *
      * @param array $attr
-     *
      * @return object|null
      */
     public function findFirst($attr = ['*']): object|null;
@@ -297,60 +300,66 @@ interface BaseRepositoryContract
      * Find all entities.
      *
      * @param array $attr
-     *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findAll($attr = ['*']): Collection;
+    public function findAll($attr = ['*']): \Illuminate\Database\Eloquent\Collection;
 
     /**
      * Paginate all entities.
      *
-     * @param int|null $perPage
-     * @param array $attributes
-     * @param string $pageName
-     * @param int|null $page
-     *
+     * @param int|string|null $per_page
+     * @param string[] $attributes
+     * @param string $page_name
+     * @param int|string|null $page
      * @return LengthAwarePaginator
-     * @return LengthAwarePaginator
-     *
-     * @throws InvalidArgumentException
      */
     public function paginate(
-        $perPage = null,
-        $attributes = ['*'],
-        $pageName = 'page',
-        $page = null
+        int|string $per_page = null,
+        array $attributes = ['*'],
+        string $page_name = 'page',
+        null|int|string $page = null
     ): LengthAwarePaginator;
 
     /**
      * Paginate all entities into a simple paginator.
      *
-     * @param int|null $perPage
+     * @param int|string|null $per_page
      * @param array $attributes
-     * @param string $pageName
-     *
+     * @param string $page_name
+     * @param int|string|null $page
      * @return Paginator
      */
-    public function simplePaginate($perPage = null, $attributes = ['*'], $pageName = 'page'): Paginator;
+    public function simplePaginate(
+        int|string $per_page = null,
+        array $attributes = ['*'],
+        string $page_name = 'page',
+        null|int|string $page = null
+    ): Paginator;
 
     /**
-     * @param null $perPage
-     * @param string[] $columns
-     * @param string $cursorName
-     * @param null $cursor
+     * Cursor paginate is a lazy collection or php generators
+     *
+     * @param int|string|null $per_page
+     * @param array $columns
+     * @param string $cursor_name
+     * @param $cursor
      * @return mixed
      */
-    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+    public function cursorPaginate(
+        int|string $per_page = null,
+        array $columns = ['*'],
+        string $cursor_name = 'cursor',
+        $cursor = null
+    );
 
     /**
      * Find all entities matching where conditions.
      *
      * @param array $where
      * @param array $attrs
-     *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findWhere(array $where, $attrs = ['*']);
+    public function findWhere(array $where, $attrs = ['*']): \Illuminate\Database\Eloquent\Collection;
 
     /**
      * Find all entities matching whereIn conditions.
@@ -358,29 +367,27 @@ interface BaseRepositoryContract
      * @param array $where
      * @param array $attrs
      *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findWhereIn(array $where, $attrs = ['*']);
+    public function findWhereIn(array $where, $attrs = ['*']): \Illuminate\Database\Eloquent\Collection;
 
     /**
      * Find all entities matching whereNotIn conditions.
      *
      * @param array $where
      * @param array $attributes
-     *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findWhereNotIn(array $where, $attributes = ['*']);
+    public function findWhereNotIn(array $where, $attributes = ['*']): \Illuminate\Database\Eloquent\Collection;
 
     /**
      * Find all entities matching whereHas conditions.
      *
      * @param array $where
      * @param array $attributes
-     *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findWhereHas(array $where, $attributes = ['*']);
+    public function findWhereHas(array $where, $attributes = ['*']): \Illuminate\Database\Eloquent\Collection;
 
     /**
      * @param array $where
@@ -400,30 +407,32 @@ interface BaseRepositoryContract
      * @param $attrs
      * @param array $values
      * @param bool $sync_relations
-     * @return object|null
+     * @return object|bool|null
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
+     * @throws RepositoryException
      */
-    public function updateOrInsert($attrs, $values = [], $sync_relations = false): ?object;
+    public function updateOrInsert($attrs, $values = [], $sync_relations = false): null|object|bool;
 
     /**
-     * Create a new entity with the given attributes.
-     *
      * @param array $attrs
      * @param bool $sync_relations
-     *
-     * @return null|object
+     * @return Model|null
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function create(array $attrs = [], bool $sync_relations = false): ?object;
 
     /**
      * Update an entity with the given attributes.
      *
-     * @param mixed $id
+     * @param int|string|Model $id
      * @param array $attrs
      * @param bool $sync_relations
-     *
      * @return null|object
      */
-    public function update(int|string $id, array $attrs = [], bool $sync_relations = false): ?object;
+    public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): ?object;
 
     /**
      * Store the entity with the given attributes.
@@ -431,10 +440,14 @@ interface BaseRepositoryContract
      * @param mixed $id
      * @param array $attrs
      * @param bool $sync_relations
-     *
-     * @return object|null
+     * @return object|null|bool
+     * @throws BindingResolutionException
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
+     * @throws RepositoryException
      */
-    public function store(int $id = null, array $attrs = [], bool $sync_relations = false): ?object;
+    public function store(int $id = null, array $attrs = [], bool $sync_relations = false): null|object|bool;
 
     /**
      * Delete an entity with the given id.
@@ -483,7 +496,6 @@ interface BaseRepositoryContract
      * Retrieve the "count" result of the query.
      *
      * @param string $columns
-     *
      * @return int
      */
     public function count($columns = '*'): int;
@@ -492,37 +504,33 @@ interface BaseRepositoryContract
      * Retrieve the minimum value of a given column.
      *
      * @param string $column
-     *
      * @return mixed
      */
-    public function min($column);
+    public function min(string $column);
 
     /**
      * Retrieve the maximum value of a given column.
      *
      * @param string $column
-     *
      * @return mixed
      */
-    public function max($column);
+    public function max(string $column): mixed;
 
     /**
      * Retrieve the average value of a given column.
      *
      * @param string $column
-     *
      * @return mixed
      */
-    public function avg($column);
+    public function avg(string $column): mixed;
 
     /**
      * Retrieve the sum of the values of a given column.
      *
      * @param string $column
-     *
      * @return mixed
      */
-    public function sum($column);
+    public function sum(string $column): mixed;
 
     /**
      * Dynamically pass missing methods to the model.

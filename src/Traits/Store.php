@@ -13,6 +13,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Service\Repository\Exceptions\RepositoryException;
 
+use function count;
+
 trait Store
 {
     /**
@@ -111,10 +113,7 @@ trait Store
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws RepositoryException
-     * @throws BindingResolutionException
+     * @inheritDoc
      */
     public function create(array $attrs = [], bool $sync_relations = false): ?object
     {
@@ -138,7 +137,7 @@ trait Store
             $this->syncRelations($entity, $relations);
         }
 
-        // Fire the created event
+        // The Fire created event
         $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
 
         // Return instance
@@ -153,7 +152,7 @@ trait Store
      * @throws NotFoundExceptionInterface
      * @throws RepositoryException
      */
-    public function update(int|string $id, array $attrs = [], bool $sync_relations = false): ?object
+    public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): ?object
     {
         $updated = null;
 
@@ -192,12 +191,6 @@ trait Store
 
     /**
      * @inheritDoc
-     *
-     * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
      */
     public function insert($values): bool
     {

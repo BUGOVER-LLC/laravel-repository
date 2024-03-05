@@ -9,7 +9,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -21,6 +20,7 @@ use Service\Repository\Traits\Prepare;
 use Service\Repository\Traits\Store;
 use Service\Repository\Traits\StoreRelations;
 
+use function count;
 use function func_get_args;
 use function is_array;
 
@@ -42,10 +42,7 @@ class EloquentRepository extends Repository implements WhereClauseContract
      * @inheritDoc
      * @param null $column
      * @param array $attributes
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @return object|null
      */
     public function firstLatest($column = null, array $attributes = ['*']): ?object
     {
@@ -57,9 +54,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
      * @inheritDoc
      * @param null $column
      * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function latest($column = null): Builder
     {
@@ -69,11 +63,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * @inheritDoc
-     * @param null $column
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function firstOldest($column = null): ?object
     {
@@ -83,11 +72,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * @inheritDoc
-     * @param null $column
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function oldest($column = null): Builder
     {
@@ -97,13 +81,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $where
-     * @param string[] $attributes
-     * @return mixed
-     * @throws JsonException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function firstWhere(array $where, $attributes = ['*']): ?object
     {
@@ -118,36 +95,36 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * @inheritdoc
+     * @param $against
+     * @param ...$matches
+     * @return WhereClauseContract|null
      */
-    public function fullSearch($against, ...$matches): ?WhereClauseContract
+    public function fullSearch($against, ...$matches): ?static
     {
         return $this->whereRaw("MATCH ($matches) AGAINST (\\'$against\\' IN BOOLEAN MODE)");
     }
 
     /**
-     * @inheritDoc
-     *
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @param $attribute
+     * @param $operator
+     * @param $value
+     * @param $exists_column
+     * @param string $boolean
+     * @return bool
      */
     public function whereExistsExist(
         $attribute,
         $operator = null,
         $value = null,
-        $existsColumn = '',
+        $exists_column = '',
         string $boolean = 'and'
     ): bool {
-        return $this->where($attribute, $operator, $value, $boolean)->exists($existsColumn);
+        return $this->where($attribute, $operator, $value, $boolean)->exists($exists_column);
     }
 
     /**
      * @param string $column
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function exists(string $column = '*'): bool
     {
@@ -158,13 +135,11 @@ class EloquentRepository extends Repository implements WhereClauseContract
     /////////////////////////         RESET WHERE CLAUSES          /////////////////////////
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @param $id
+     * @param $attributes
+     * @return mixed|object|null
      */
-    public function findOrFail($id, $attributes = ['*'])
+    public function findOrFail($id, $attributes = ['*']): mixed
     {
         $result = $this->find($id, $attributes);
 
@@ -181,15 +156,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param $id
-     * @param string[] $attrs
-     * @return object|null
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function find($id, $attrs = ['*']): ?object
+    public function find(int|string $id, $attrs = ['*']): ?object
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->find($id, $attrs));
@@ -197,12 +165,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * @inheritDoc
-     *
-     * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
      */
     public function findOrNew(int $id, array $attributes = ['*'], bool $sync_relations = false): ?object
     {
@@ -214,13 +176,9 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @inheritDoc
      */
-    public function findBy($attribute, $value, $attributes = ['*']): object|null
+    public function findBy(string $attribute, mixed $value, array $attributes = ['*']): object|null
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->where($attribute, '=', $value)->first($attributes));
@@ -228,12 +186,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param string[] $attr
-     * @return object|null
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function findFirst($attr = ['*']): object|null
     {
@@ -243,79 +195,55 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param null $perPage
-     * @param string[] $attributes
-     * @param string $pageName
-     * @param null $page
-     * @return LengthAwarePaginator
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function paginate(
-        $perPage = null,
-        $attributes = ['*'],
-        $pageName = 'page',
-        $page = null
+        int|string $per_page = null,
+        array $attributes = ['*'],
+        string $page_name = 'page',
+        null|int|string $page = null
     ): LengthAwarePaginator {
-        $page = $page ?: Paginator::resolveCurrentPage($pageName);
+        $page = $page ?: Paginator::resolveCurrentPage($page_name);
 
         return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('page')),
-            fn() => $this->prepareQuery($this->createModel())->paginate($perPage, $attributes, $pageName, $page));
+            fn() => $this->prepareQuery($this->createModel())->paginate($per_page, $attributes, $page_name, $page));
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @param null $perPage
-     * @param string[] $attributes
-     * @param string $pageName
-     * @param null $page
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function simplePaginate(
-        $perPage = null,
-        $attributes = ['*'],
-        $pageName = 'page',
-        $page = null
+        int|string $per_page = null,
+        array $attributes = ['*'],
+        string $page_name = 'page',
+        null|int|string $page = null
     ): \Illuminate\Contracts\Pagination\Paginator {
-        $page = $page ?: Paginator::resolveCurrentPage($pageName);
+        $page = $page ?: Paginator::resolveCurrentPage($page_name);
 
         return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('page')),
-            fn() => $this->prepareQuery($this->createModel())->simplePaginate($perPage, $attributes, $pageName, $page));
+            fn() => $this->prepareQuery($this->createModel())->simplePaginate($per_page, $attributes, $page_name,
+                $page));
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @param null $perPage
-     * @param string[] $columns
-     * @param string $cursorName
-     * @param null $cursor
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
-    {
-        $cursor = $cursor ?: Paginator::resolveCurrentPage($cursorName);
+    public function cursorPaginate(
+        int|string $per_page = null,
+        array $columns = ['*'],
+        string $cursor_name = 'cursor',
+        $cursor = null
+    ) {
+        $cursor = $cursor ?: Paginator::resolveCurrentPage($cursor_name);
 
         return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('cursor')),
-            fn() => $this->prepareQuery($this->createModel())->cursorPaginate($perPage, $columns, $cursorName,
+            fn() => $this->prepareQuery($this->createModel())->cursorPaginate($per_page, $columns, $cursor_name,
                 $cursor));
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @throws JsonException
      */
-    public function findWhere(array $where, $attrs = ['*'])
+    public function findWhere(array $where, $attrs = ['*']): \Illuminate\Database\Eloquent\Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($where, $attrs) {
             [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
@@ -328,15 +256,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $where
-     * @param string[] $attrs
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function findWhereIn(array $where, $attrs = ['*'])
+    public function findWhereIn(array $where, $attrs = ['*']): \Illuminate\Database\Eloquent\Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($where, $attrs) {
             [$attribute, $values, $boolean, $not] = array_pad($where, 4, null);
@@ -349,15 +270,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param array $where
-     * @param string[] $attributes
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function findWhereNotIn(array $where, $attributes = ['*'])
+    public function findWhereNotIn(array $where, $attributes = ['*']): \Illuminate\Database\Eloquent\Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             function () use ($where, $attributes) {
@@ -371,11 +285,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * @inheritdoc
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function findWhereHas(array $where, $attributes = ['*'])
+    public function findWhereHas(array $where, $attributes = ['*']): \Illuminate\Database\Eloquent\Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             function () use ($where, $attributes) {
@@ -433,14 +344,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param string[] $attr
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function findAll($attr = ['*']): Collection
+    public function findAll($attr = ['*']): \Illuminate\Database\Eloquent\Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->get($attr));
@@ -448,12 +353,6 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * {@inheritdoc}
-     *
-     * @param string $columns
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function count($columns = '*'): int
     {
@@ -462,28 +361,17 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * @inheritdoc
-     * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
+     * @inheritDoc
      */
-    public function store(int $id = null, array $attrs = [], bool $sync_relations = false): ?object
+    public function store(int $id = null, array $attrs = [], bool $sync_relations = false): null|object|bool
     {
         return !$id ? $this->create($attrs, $sync_relations) : $this->update($id, $attrs, $sync_relations);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
+     * @inheritDoc
      */
-    public function updateOrInsert($attrs, $values = [], $sync_relations = false): ?object
+    public function updateOrInsert($attrs, $values = [], $sync_relations = false): null|object|bool
     {
         $query = array_chunk($attrs, 3);
 
@@ -528,7 +416,7 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function commit(): void
     {
@@ -536,7 +424,7 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rollBack(): void
     {
@@ -544,45 +432,27 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param $column
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @inheritdoc
      */
-    public function min($column)
+    public function min(string $column)
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->min($column));
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param $column
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @inheritdoc
      */
-    public function max($column)
+    public function max(string $column): mixed
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->max($column));
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param $column
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @inheritdoc
      */
-    public function avg($column)
+    public function avg(string $column): mixed
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($column) {
             return $this->prepareQuery($this->createModel())->avg($column);
@@ -590,15 +460,9 @@ class EloquentRepository extends Repository implements WhereClauseContract
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param $column
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
+     * @inheritdoc
      */
-    public function sum($column)
+    public function sum(string $column): mixed
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->sum($column));
@@ -606,12 +470,8 @@ class EloquentRepository extends Repository implements WhereClauseContract
 
     /**
      * @inheritDoc
-     *
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
-    public function deletesBy($where, array $values = []): ?bool
+    public function deletesBy(string $where, array $values = []): ?bool
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->whereIn($where, $values)->delete());

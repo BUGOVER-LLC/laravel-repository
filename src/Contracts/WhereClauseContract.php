@@ -253,7 +253,7 @@ interface WhereClauseContract
      * @param $attribute
      * @param null $operator
      * @param null $value
-     * @param string $existsColumn
+     * @param string $exists_column
      * @param string $boolean
      * @return bool
      */
@@ -261,7 +261,7 @@ interface WhereClauseContract
         $attribute,
         $operator = null,
         $value = null,
-        string $existsColumn = '',
+        string $exists_column = '',
         string $boolean = 'and'
     ): bool;
 
