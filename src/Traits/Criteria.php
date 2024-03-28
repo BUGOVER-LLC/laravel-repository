@@ -7,7 +7,6 @@ namespace Service\Repository\Traits;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass;
 use ReflectionException;
@@ -136,7 +135,7 @@ trait Criteria
         }
 
         // If an array is assoc we assume that the key is a class and value is an arguments
-        if (Arr::isAssoc($criterion)) {
+        if (array_is_list($criterion)) {
             $criterion = [array_keys($criterion)[0], array_values($criterion)[0]];
         } elseif (1 === count($criterion)) {
             // If an array is not assoc but count is one, we can assume there is a class without arguments.
@@ -384,7 +383,7 @@ trait Criteria
         }
 
         // If arguments is an associative array we can assume their order and parameter existence
-        if (Arr::isAssoc($arguments)) {
+        if (array_is_list($arguments)) {
             $parameters = array_column($reflection->getConstructor()->getParameters(), 'name');
 
             $arguments = array_filter(array_map(static fn($parameter) => $arguments[$parameter] ?? null, $parameters));

@@ -26,53 +26,6 @@ use function is_string;
  *
  * @package Service\Repository\Repositories
  *
- * @property array $whereJson
- * @property array $whereExists
- * @property array $whereJsonCount
- * @property array $orWhereJson
- * @property array $whereJsonNotIn
- * @property array $when
- * @property array $has
- * @property array $orHas
- * @property array $orWhereHas
- * @property array $doesntHave
- * @property array $orDoesntHave
- * @property array $whereDoesntHave
- * @property array $orWhereDoesntHave
- * @property array $hasMorph
- * @property array $whereHasMorph
- * @property array $whereBetween
- * @property array $orWhereBetween
- * @property array $whereNotBetween
- * @property array $whereDate
- * @property array $whereMonth
- * @property array $whereDay
- * @property array $whereTime
- * @property array $withCount
- * @property array $withExists
- * @property array $withMax
- * @property array $withMin
- * @property array $withAvg
- * @property array $withSum
- * @property array $whereRaw
- * @property array $orWhereRaw
- * @property array $except
- * @property array $relations
- * @property array $where
- * @property array $orWhere
- * @property array $whereIn
- * @property array $whereNotIn
- * @property array $whereHas
- * @property array $scopes
- * @property array $orderBy
- * @property array $groupBy
- * @property array $having
- * @property array $havingRaw
- * @property array $join
- * @property null|int $offset
- * @property null|int $limit
- * @property bool $withTrashed
- * @property bool $withoutScope
  */
 abstract class Repository implements RepositoryContract, BaseCacheContract
 {

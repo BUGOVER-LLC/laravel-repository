@@ -94,8 +94,9 @@ trait Store
      * @throws ContainerExceptionInterface
      * @throws JsonException
      * @throws NotFoundExceptionInterface
+     * @throws RepositoryException
      */
-    public function delete(int|string $id): false|object
+    public function delete(int|string $id, array $relations = []): false|object
     {
         $deleted = false;
 
@@ -104,6 +105,11 @@ trait Store
 
         if ($entity) {
             // Delete the instance
+            if ($relations) {
+                $relations = $this->extractRelations($entity, $relations);
+                $this->syncRelations($entity, $relations);
+            }
+
             $deleted = $entity->delete();
             // Fire the deleted event
             $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleted', [$this, $entity]);
@@ -197,8 +203,12 @@ trait Store
         // Create a new instance
         $entity = $this->createModel();
 
-        $inserted = $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->insert($values));
+        $inserted = $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            \func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->insert($values)
+        );
 
         // Fire the created event
         $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
