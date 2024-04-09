@@ -57,7 +57,7 @@ trait StoreRelations
                 case BelongsToMany::class:
                     $entity->{$method}()->sync((array)$relation['values'], $detaching);
                     break;
-                case HasMany::class:
+                case HasMany::class: // @TODO FIX FOR UPDATE OR DELETE
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
                     $entity->{$method}()->createMany(
                         array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
@@ -68,7 +68,7 @@ trait StoreRelations
                         [$this, $relation['values']]
                     );
                     break;
-                case HasOne::class:
+                case HasOne::class: // @TODO FIX FOR UPDATE OR DELETE
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
                     $entity->{$method}()->create($relation['values'], $detaching);
                     $this->getContainer('events')->dispatch(

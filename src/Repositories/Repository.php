@@ -102,6 +102,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract
 
     /**
      * {@inheritdoc}
+     * @throws RepositoryException
      */
     public function createModel(): Model
     {

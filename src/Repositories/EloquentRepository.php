@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace Service\Repository\Repositories;
 
 use Closure;
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -47,8 +52,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function firstLatest($column = null, array $attributes = ['*']): ?object
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->latest($column)->first($attributes));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->latest($column)->first($attributes)
+        );
     }
 
     /**
@@ -58,8 +67,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function latest($column = null): Builder
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->latest($column));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->latest($column)
+        );
     }
 
     /**
@@ -67,8 +80,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function firstOldest($column = null): ?object
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->oldest($column)->first());
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->oldest($column)->first()
+        );
     }
 
     /**
@@ -76,8 +93,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function oldest($column = null): Builder
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->oldest($column));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->oldest($column)
+        );
     }
 
     /**
@@ -85,14 +106,18 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function firstWhere(array $where, $attributes = ['*']): ?object
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
             function () use ($where, $attributes) {
                 [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
 
                 $this->where($attribute, $operator, $value, $boolean);
 
                 return $this->prepareQuery($this->createModel())->first($attributes);
-            });
+            }
+        );
     }
 
     /**
@@ -129,8 +154,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function exists(string $column = '*'): bool
     {
-        return (bool)$this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->exists($column));
+        return (bool)$this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->exists($column)
+        );
     }
 
     /////////////////////////         RESET WHERE CLAUSES          /////////////////////////
@@ -160,8 +189,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function find(int|string $id, $attrs = ['*']): ?object
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->find($id, $attrs));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->find($id, $attrs)
+        );
     }
 
     /**
@@ -181,8 +214,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function findBy(string $attribute, mixed $value, array $attributes = ['*']): object|null
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->where($attribute, '=', $value)->first($attributes));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->where($attribute, '=', $value)->first($attributes)
+        );
     }
 
     /**
@@ -190,8 +227,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function findFirst($attr = ['*']): object|null
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->first($attr));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->first($attr)
+        );
     }
 
     /**
@@ -205,8 +246,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     ): LengthAwarePaginator {
         $page = $page ?: Paginator::resolveCurrentPage($page_name);
 
-        return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('page')),
-            fn() => $this->prepareQuery($this->createModel())->paginate($per_page, $attributes, $page_name, $page));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            array_merge(func_get_args(), compact('page')),
+            fn() => $this->prepareQuery($this->createModel())->paginate($per_page, $attributes, $page_name, $page)
+        );
     }
 
     /**
@@ -220,9 +265,17 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     ): \Illuminate\Contracts\Pagination\Paginator {
         $page = $page ?: Paginator::resolveCurrentPage($page_name);
 
-        return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('page')),
-            fn() => $this->prepareQuery($this->createModel())->simplePaginate($per_page, $attributes, $page_name,
-                $page));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            array_merge(func_get_args(), compact('page')),
+            fn() => $this->prepareQuery($this->createModel())->simplePaginate(
+                $per_page,
+                $attributes,
+                $page_name,
+                $page
+            )
+        );
     }
 
     /**
@@ -236,15 +289,23 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     ) {
         $cursor = $cursor ?: Paginator::resolveCurrentPage($cursor_name);
 
-        return $this->executeCallback(static::class, __FUNCTION__, array_merge(func_get_args(), compact('cursor')),
-            fn() => $this->prepareQuery($this->createModel())->cursorPaginate($per_page, $columns, $cursor_name,
-                $cursor));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            array_merge(func_get_args(), compact('cursor')),
+            fn() => $this->prepareQuery($this->createModel())->cursorPaginate(
+                $per_page,
+                $columns,
+                $cursor_name,
+                $cursor
+            )
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function findWhere(array $where, $attrs = ['*']): \Illuminate\Database\Eloquent\Collection
+    public function findWhere(array $where, $attrs = ['*']): Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($where, $attrs) {
             [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
@@ -258,7 +319,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     /**
      * {@inheritdoc}
      */
-    public function findWhereIn(array $where, $attrs = ['*']): \Illuminate\Database\Eloquent\Collection
+    public function findWhereIn(array $where, $attrs = ['*']): Collection
     {
         return $this->executeCallback(static::class, __FUNCTION__, func_get_args(), function () use ($where, $attrs) {
             [$attribute, $values, $boolean, $not] = array_pad($where, 4, null);
@@ -272,31 +333,39 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     /**
      * {@inheritdoc}
      */
-    public function findWhereNotIn(array $where, $attributes = ['*']): \Illuminate\Database\Eloquent\Collection
+    public function findWhereNotIn(array $where, $attributes = ['*']): Collection
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
             function () use ($where, $attributes) {
                 [$attribute, $values, $boolean] = array_pad($where, 3, null);
 
                 $this->whereNotIn($attribute, $values, $boolean);
 
                 return $this->prepareQuery($this->createModel())->get($attributes);
-            });
+            }
+        );
     }
 
     /**
      * @inheritdoc
      */
-    public function findWhereHas(array $where, $attributes = ['*']): \Illuminate\Database\Eloquent\Collection
+    public function findWhereHas(array $where, $attributes = ['*']): Collection
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
             function () use ($where, $attributes) {
                 [$relation, $callback, $operator, $count] = array_pad($where, 4, null);
 
                 $this->whereHas($relation, $callback, $operator, $count);
 
                 return $this->prepareQuery($this->createModel())->get($attributes);
-            });
+            }
+        );
     }
 
     /**
@@ -346,10 +415,14 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     /**
      * {@inheritdoc}
      */
-    public function findAll($attr = ['*']): \Illuminate\Database\Eloquent\Collection
+    public function findAll($attr = ['*']): Collection
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->get($attr));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->get($attr)
+        );
     }
 
     /**
@@ -357,8 +430,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function count($columns = '*'): int
     {
-        return (int)$this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->count($columns));
+        return (int)$this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->count($columns)
+        );
     }
 
     /**
@@ -437,8 +514,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function min(string $column)
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->min($column));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->min($column)
+        );
     }
 
     /**
@@ -446,8 +527,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function max(string $column): mixed
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->max($column));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->max($column)
+        );
     }
 
     /**
@@ -465,8 +550,12 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function sum(string $column): mixed
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->sum($column));
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->sum($column)
+        );
     }
 
     /**
@@ -474,7 +563,82 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function deletesBy(string $where, array $values = []): ?bool
     {
-        return $this->executeCallback(static::class, __FUNCTION__, func_get_args(),
-            fn() => $this->prepareQuery($this->createModel())->whereIn($where, $values)->delete());
+        return $this->executeCallback(
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
+            fn() => $this->prepareQuery($this->createModel())->whereIn($where, $values)->delete()
+        );
+    }
+
+    /**
+     * Creates a new QueryBuilder instance that is prepopulated for this entity name.
+     *
+     * @param ?string $alias
+     * @param array $columns
+     * @param string $indexBy The index for the from.
+     *
+     * @return QueryBuilder
+     * @throws RepositoryException
+     */
+    protected function createQueryBuilder(
+        string $alias = null,
+        array $columns = [],
+        string $indexBy = ''
+    ): QueryBuilder {
+        return DB::table($this->model()->getTable(), $alias)
+            ->select($columns)
+            ->from($this->model()->getTable(), $alias)
+            ->useIndex($indexBy);
+    }
+
+    /**
+     * Creates a new QueryBuilder instance that is prepopulated for this entity name.
+     *
+     * @param ?string $alias
+     * @param array $columns
+     * @param string $indexBy The index for the from.
+     *
+     * @return EloquentBuilder
+     */
+    protected function createModelBuilder(
+        string $alias = null,
+        array $columns = [],
+        string $indexBy = ''
+    ): EloquentBuilder {
+        try {
+            return $this
+                ->createModel()
+                ->newQuery()
+                ->select($columns)
+                ->from($this->model()->getTable(), $alias)
+                ->useIndex($indexBy);
+        } catch (Exception) {
+        }
+    }
+
+    /**
+     * Creates a new QueryBuilder instance that is prepopulated for this entity name.
+     *
+     * @param ?string $alias
+     * @param array $columns
+     * @param string $indexBy The index for the from.
+     *
+     * @return EloquentBuilder
+     */
+    protected function createNewModelBuilder(
+        string $alias = null,
+        array $columns = [],
+        string $indexBy = ''
+    ): EloquentBuilder {
+        try {
+            return $this
+                ->createModel()
+                ->newModelQuery()
+                ->select($columns)
+                ->from($this->model()->getTable(), $alias)
+                ->useIndex($indexBy);
+        } catch (Exception) {
+        }
     }
 }
