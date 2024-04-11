@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 use Service\Repository\Exceptions\RepositoryException;
 
 use function get_class;
@@ -57,22 +58,22 @@ trait StoreRelations
                 case BelongsToMany::class:
                     $entity->{$method}()->sync((array)$relation['values'], $detaching);
                     break;
-                case HasMany::class: // @TODO FIX FOR UPDATE OR DELETE
-                    $rel_repository = $this->getRelationRepositoryId($entity, $method);
+                case HasMany::class:
                     $entity->{$method}()->createMany(
                         array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
                         $detaching
                     );
-                    $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
-                    );
-                    break;
-                case HasOne::class: // @TODO FIX FOR UPDATE OR DELETE
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $entity->{$method}()->create($relation['values'], $detaching);
-                    $this->getContainer('events')->dispatch(
+                    $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
                         $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
-                    );
+                    )) : null;
+                    break;
+                case HasOne::class:
+                    $entity->{$method}()->create($relation['values'], $detaching);
+                    $rel_repository = $this->getRelationRepositoryId($entity, $method);
+                    $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
+                    )) : null;
                     break;
                 case BelongsTo::class:
                     $relation['values'] = array_merge(
@@ -81,9 +82,9 @@ trait StoreRelations
                     );
                     $entity->{$method}()->create($relation['values'], $detaching);
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $this->getContainer('events')->dispatch(
+                    $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
                         $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
-                    );
+                    )) : null;
                     break;
                 default:
                     throw new RepositoryException('Error relation type ' . $relation['class'], 500);
@@ -94,10 +95,16 @@ trait StoreRelations
     /**
      * @param object $entity
      * @param string $method
-     * @return mixed
+     * @return object|string
      */
-    private function getRelationRepositoryId(object $entity, string $method): mixed
+    private function getRelationRepositoryId(object $entity, string $method): object|string
     {
-        return app($entity->{$method}()->getRelated()->getModelRepositoryClass());
+        $repository = $entity->{$method}()->getRelated()->getModelRepositoryClass();
+
+        if ($repository) {
+            return '';
+        }
+
+        return app($repository);
     }
 }

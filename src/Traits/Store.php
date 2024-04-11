@@ -7,6 +7,7 @@ namespace Service\Repository\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -57,7 +58,12 @@ trait Store
 
             if ($updated) {
                 // Fire the updated event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.updated', [$this, $entity]);
+                DB::afterCommit(
+                    fn() => $this->getContainer('events')->dispatch(
+                        $this->getRepositoryId() . '.entity.updated',
+                        [$this, $entity]
+                    )
+                );
             }
         }
 
@@ -112,7 +118,12 @@ trait Store
 
             $deleted = $entity->delete();
             // Fire the deleted event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.deleted', [$this, $entity]);
+            DB::afterCommit(
+                fn() => $this->getContainer('events')->dispatch(
+                    $this->getRepositoryId() . '.entity.deleted',
+                    [$this, $entity]
+                )
+            );
         }
 
         return $deleted ? $entity : $deleted;
@@ -144,7 +155,12 @@ trait Store
         }
 
         // The Fire created event
-        $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
+        DB::afterCommit(
+            fn() => $this->getContainer('events')->dispatch(
+                $this->getRepositoryId() . '.entity.created',
+                [$this, $entity]
+            )
+        );
 
         // Return instance
         return $created ? $entity : null;
@@ -188,7 +204,11 @@ trait Store
 
             if (count($dirty) > 0) {
                 // Fire the updated event
-                $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.updated', [$this, $entity]);
+                DB::afterCommit(
+                    fn() => $this->getContainer('events')->dispatch(
+                        $this->getRepositoryId() . '.entity.updated', [$this, $entity]
+                    )
+                );
             }
         }
 
@@ -204,14 +224,17 @@ trait Store
         $entity = $this->createModel();
 
         $inserted = $this->executeCallback(
-            static::class,
-            __FUNCTION__,
-            \func_get_args(),
+            static::class, __FUNCTION__, \func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->insert($values)
         );
 
         // Fire the created event
-        $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.created', [$this, $entity]);
+        DB::afterCommit(
+            fn() => $this->getContainer('events')->dispatch(
+                $this->getRepositoryId() . '.entity.created',
+                [$this, $entity]
+            )
+        );
 
         return $inserted;
     }
@@ -227,14 +250,16 @@ trait Store
         $entity = $id instanceof Model ? $id : $this->withTrashed()->find($id);
 
         if ($entity) {
-            // Fire the restoring event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.restoring', [$this, $entity]);
-
             // Restore the instance
             $restored = $entity->restore();
 
             // Fire the restored event
-            $this->getContainer('events')->dispatch($this->getRepositoryId() . '.entity.restored', [$this, $entity]);
+            DB::afterCommit(
+                fn() => $this->getContainer('events')->dispatch(
+                    $this->getRepositoryId() . '.entity.restored',
+                    [$this, $entity]
+                )
+            );
         }
 
         return $restored ? $entity : $restored;
