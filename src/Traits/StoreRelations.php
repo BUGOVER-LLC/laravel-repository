@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Service\Repository\Traits;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -27,15 +28,14 @@ trait StoreRelations
         $potential = array_diff(array_keys($attributes), $entity->getFillable());
 
         array_walk(
-            $potential,
-            static function ($relation) use ($entity, $attributes, &$relations) {
-                if (method_exists($entity, $relation)) {
-                    $relations[$relation] = [
-                        'values' => $attributes[$relation],
-                        'class' => get_class($entity->{$relation}()),
-                    ];
-                }
+            $potential, static function ($relation) use ($entity, $attributes, &$relations) {
+            if (method_exists($entity, $relation)) {
+                $relations[$relation] = [
+                    'values' => $attributes[$relation],
+                    'class' => get_class($entity->{$relation}()),
+                ];
             }
+        }
         );
 
         return $relations;
@@ -64,16 +64,25 @@ trait StoreRelations
                         $detaching
                     );
                     $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.created',
-                        [$this, $relation['values']]
+                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
                     );
                     break;
                 case HasOne::class: // @TODO FIX FOR UPDATE OR DELETE
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
                     $entity->{$method}()->create($relation['values'], $detaching);
                     $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.created',
-                        [$this, $relation['values']]
+                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
+                    );
+                    break;
+                case BelongsTo::class:
+                    $relation['values'] = array_merge(
+                        [$entity->getKeyName() => $entity->{$entity->getKeyName()}],
+                        $relation['values']
+                    );
+                    $entity->{$method}()->create($relation['values'], $detaching);
+                    $rel_repository = $this->getRelationRepositoryId($entity, $method);
+                    $this->getContainer('events')->dispatch(
+                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
                     );
                     break;
                 default:
