@@ -61,9 +61,6 @@ trait Cache
 
     /**
      * @return Repository|Cache
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      */
     public function forgetCache(): self
     {

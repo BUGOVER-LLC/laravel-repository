@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Service\Repository\Listeners;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Service\Repository\Repositories\EloquentRepository;
 
 use function in_array;
 
@@ -41,6 +42,10 @@ class RepositoryEventListener
 
         if ($entities[0]->isCacheClearEnabled() && in_array('create', $clear_on, true)) {
             $entities[0]->forgetCache();
+
+            if ($entities[1] instanceof EloquentRepository && $entities[1]->isCacheClearEnabled()) {
+                $entities[1]->forgetCache();
+            }
         }
     }
 
@@ -58,6 +63,10 @@ class RepositoryEventListener
 
         if ($entities[0]->isCacheClearEnabled() && in_array('update', $clear_on, true)) {
             $entities[0]->forgetCache();
+
+            if ($entities[1] instanceof EloquentRepository && $entities[1]->isCacheClearEnabled()) {
+                $entities[1]->forgetCache();
+            }
         }
     }
 
@@ -75,6 +84,10 @@ class RepositoryEventListener
 
         if ($entities[0]->isCacheClearEnabled() && in_array('delete', $clear_on, true)) {
             $entities[0]->forgetCache();
+
+            if ($entities[1] instanceof EloquentRepository && $entities[1]->isCacheClearEnabled()) {
+                $entities[1]->forgetCache();
+            }
         }
     }
 }
