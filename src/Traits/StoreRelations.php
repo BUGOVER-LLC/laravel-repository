@@ -51,40 +51,71 @@ trait StoreRelations
      * @return void
      * @throws RepositoryException
      */
-    private function syncRelations(object $entity, array $relations, bool $detaching = true): void
-    {
+    private function syncRelations(
+        object $entity,
+        array $relations,
+        string $event = 'create',
+        bool $detaching = true
+    ): void {
         foreach ($relations as $method => $relation) {
             switch ($relation['class']) {
                 case BelongsToMany::class:
                     $entity->{$method}()->sync((array)$relation['values'], $detaching);
                     break;
                 case HasMany::class:
-                    $entity->{$method}()->createMany(
-                        array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
-                        $detaching
-                    );
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
-                    )) : null;
+                    if ('update' === $event) {
+                        $entity->{$method}()->update($relation['values']);
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.update', [$this, $relation['values']]
+                        )) : null;
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.updated', [$this, $relation['values']]
+                        )) : null;
+                    } else {
+                        $entity->{$method}()->createMany(
+                            array_is_list($relation['values']) ? $relation['values'] : [$relation['values']],
+                            $detaching
+                        );
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
+                        )) : null;
+                    }
                     break;
                 case HasOne::class:
-                    $entity->{$method}()->create($relation['values'], $detaching);
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
-                    )) : null;
+                    if ('update' === $event) {
+                        $entity->{$method}()->update($relation['values'], $detaching);
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.updated', [$this, $relation['values']]
+                        )) : null;
+                    } else {
+                        $entity->{$method}()->create($relation['values'], $detaching);
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
+                        )) : null;
+                    }
                     break;
                 case BelongsTo::class:
-                    $relation['values'] = array_merge(
-                        [$entity->getKeyName() => $entity->{$entity->getKeyName()}],
-                        $relation['values']
-                    );
-                    $entity->{$method}()->create($relation['values'], $detaching);
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
-                    $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
-                        $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
-                    )) : null;
+
+                    if ('update' === $event) {
+                        $entity->{$method}()->update($relation['values'], $detaching);
+
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.updated', [$this, $relation['values']]
+                        )) : null;
+                    } else {
+                        $relation['values'] = array_merge(
+                            [$entity->getKeyName() => $entity->{$entity->getKeyName()}],
+                            $relation['values']
+                        );
+                        $entity->{$method}()->create($relation['values'], $detaching);
+
+                        $rel_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $rel_repository->getRepositoryId() . '.entity.created', [$this, $relation['values']]
+                        )) : null;
+                    }
                     break;
                 default:
                     throw new RepositoryException('Error relation type ' . $relation['class'], 500);

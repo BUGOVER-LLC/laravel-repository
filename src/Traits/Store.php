@@ -53,7 +53,7 @@ trait Store
 
             // Sync relationships
             if ($syncRelations && isset($relations)) {
-                $this->syncRelations($entity, $relations);
+                $this->syncRelations($entity, $relations, 'update');
             }
 
             if ($updated) {
@@ -199,7 +199,7 @@ trait Store
 
             // Sync relationships
             if ($sync_relations && isset($relations)) {
-                $this->syncRelations($entity, $relations);
+                $this->syncRelations($entity, $relations, 'update');
             }
 
             if (count($dirty) > 0) {
