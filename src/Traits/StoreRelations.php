@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\DB;
 use Service\Repository\Exceptions\RepositoryException;
 
@@ -123,6 +124,23 @@ trait StoreRelations
 
                         $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
                             $this->getRepositoryId() . '.entity.created', [$this, $rel_repository, $values]
+                        )) : null;
+                    }
+                    break;
+                case MorphOne::class:
+                    $model_repository = $this->getRelationRepositoryId($entity);
+                    $rel_repository = $this->getRelationRepositoryId($entity, $method);
+
+                    if ('updated' === $event) {
+                        $entity->{$method}()->update($relation['values'], $detaching);
+
+                        $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $this->getRepositoryId() . '.entity.updated', [$this, $rel_repository, $relation['values']]
+                        )) : null;
+                    } else {
+                        $entity->{$method}()->create($relation['values'], $detaching);
+                        $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
+                            $this->getRepositoryId() . '.entity.created', [$this, $rel_repository, $relation['values']]
                         )) : null;
                     }
                     break;
