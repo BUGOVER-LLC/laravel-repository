@@ -14,6 +14,8 @@ use Psr\Container\NotFoundExceptionInterface;
 use Service\Repository\Exceptions\RepositoryException;
 
 use function count;
+use function func_get_args;
+use function in_array;
 
 trait Store
 {
@@ -217,6 +219,7 @@ trait Store
 
     /**
      * @inheritDoc
+     * @throws RepositoryException
      */
     public function insert($values): bool
     {
@@ -224,7 +227,7 @@ trait Store
         $entity = $this->createModel();
 
         $inserted = $this->executeCallback(
-            static::class, __FUNCTION__, \func_get_args(),
+            static::class, __FUNCTION__, func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->insert($values)
         );
 
