@@ -31,11 +31,11 @@ trait Store
     {
         $this->prepareQuery($this->model());
 
-        $entities = $this->findAll();
+        $entities = $this->findAll($this->model()->getKeyName());
 
         if (1 > $entities->count()) {
             // empty Collection
-            return $entities;
+            return false;
         }
 
         $updated = [];
@@ -176,42 +176,44 @@ trait Store
      * @throws NotFoundExceptionInterface
      * @throws RepositoryException
      */
-    public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): ?object
+    public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): bool|object
     {
         $updated = null;
 
         // Find the given instance
-        $entity = $id instanceof Model ? $id : $this->find($id);
+        $entity = $id instanceof Model ? $id : $this->find($id, [$this->model()->getKeyName()]);
 
-        if ($entity) {
-            // Extract relationships
-            if ($sync_relations) {
-                $relations = $this->extractRelations($entity, $attrs);
-                Arr::forget($attrs, array_keys($relations));
-            }
+        if (!$entity) {
+            return false;
+        }
 
-            // Fill instance with data
-            $entity->fill($attrs);
+        // Extract relationships
+        if ($sync_relations) {
+            $relations = $this->extractRelations($entity, $attrs);
+            Arr::forget($attrs, array_keys($relations));
+        }
 
-            //Check if we are updating attributes values
-            $dirty = $sync_relations ? [1] : $entity->getDirty();
+        // Fill instance with data
+        $entity->fill($attrs);
 
-            // Update the instance
-            $updated = $entity->save();
+        //Check if we are updating attributes values
+        $dirty = $sync_relations ? [1] : $entity->getDirty();
 
-            // Sync relationships
-            if ($sync_relations && isset($relations)) {
-                $this->syncRelations($entity, $relations, 'update');
-            }
+        // Update the instance
+        $updated = $entity->save();
 
-            if (count($dirty) > 0) {
-                // Fire the updated event
-                DB::afterCommit(
-                    fn() => $this->getContainer('events')->dispatch(
-                        $this->getRepositoryId() . '.entity.updated', [$this, $entity]
-                    )
-                );
-            }
+        // Sync relationships
+        if ($sync_relations && isset($relations)) {
+            $this->syncRelations($entity, $relations, 'update');
+        }
+
+        if (count($dirty) > 0) {
+            // Fire the updated event
+            DB::afterCommit(
+                fn() => $this->getContainer('events')->dispatch(
+                    $this->getRepositoryId() . '.entity.updated', [$this, $entity]
+                )
+            );
         }
 
         return $updated ? $entity : $updated;
