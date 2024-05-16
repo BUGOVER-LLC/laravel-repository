@@ -136,7 +136,7 @@ trait StoreRelations
                 case MorphOne::class:
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
 
-                    if ('updated' === $event) {
+                    if ('update' === $event) {
                         $entity->{$method}()->update($relation['values'], $detaching);
 
                         $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
