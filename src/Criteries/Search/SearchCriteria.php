@@ -34,7 +34,7 @@ class SearchCriteria implements BaseCriteriaContract
     public function __construct($search, $columns)
     {
         $this->search = $search;
-        $this->columns = (array)$columns;
+        $this->columns = (array) $columns;
     }
 
     /**

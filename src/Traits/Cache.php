@@ -86,7 +86,7 @@ trait Cache
     {
         try {
             return $this->cacheLifetime ?? $this->getContainer('config')->get('repository.cache.lifetime');
-        } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {
+        } catch (NotFoundExceptionInterface | ContainerExceptionInterface) {
         }
     }
 
@@ -167,9 +167,14 @@ trait Cache
 
         // We need cache tags, check if default driver supports it
         if (method_exists($this->getContainer('cache')->getStore(), 'tags')) {
-            $result = -1 === $lifetime ? $this->getContainer('cache')->tags($repository_id)->rememberForever($cache_key,
-                $closure) : $this->getContainer('cache')->tags($repository_id)->remember($cache_key, $lifetime,
-                $closure);
+            $result = -1 === $lifetime ? $this->getContainer('cache')->tags($repository_id)->rememberForever(
+                $cache_key,
+                $closure
+            ) : $this->getContainer('cache')->tags($repository_id)->remember(
+                $cache_key,
+                $lifetime,
+                $closure
+            );
 
             // We're done, let's clean up!
             $this->resetRepository();
@@ -180,8 +185,10 @@ trait Cache
         // Default cache driver doesn't support tags, let's do it manually
         $this->storeCacheKeys($class, $method, $hash);
 
-        $result = -1 === $lifetime ? $this->getContainer('cache')->rememberForever($cache_key,
-            $closure) : $this->getContainer('cache')->remember($cache_key, $lifetime, $closure);
+        $result = -1 === $lifetime ? $this->getContainer('cache')->rememberForever(
+            $cache_key,
+            $closure
+        ) : $this->getContainer('cache')->remember($cache_key, $lifetime, $closure);
 
         // We're done, let's clean up!
         $this->resetCachedRepository();
@@ -295,7 +302,7 @@ trait Cache
                 $cache_keys[$class][] = $method . '.' . $hash;
                 file_put_contents($keys_file, json_encode($cache_keys, JSON_THROW_ON_ERROR));
             }
-        } catch (ContainerExceptionInterface|NotFoundExceptionInterface|JsonException) {
+        } catch (ContainerExceptionInterface | NotFoundExceptionInterface | JsonException) {
         }
     }
 

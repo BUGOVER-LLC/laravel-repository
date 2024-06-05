@@ -31,11 +31,11 @@ trait Store
     {
         $this->prepareQuery($this->model());
 
-        $entities = $this->findAll();
+        $entities = $this->findAll($this->model()->getKeyName());
 
         if (1 > $entities->count()) {
             // empty Collection
-            return $entities;
+            return false;
         }
 
         $updated = [];
@@ -134,7 +134,25 @@ trait Store
     /**
      * @inheritDoc
      */
-    public function create(array $attrs = [], bool $sync_relations = false): ?object
+    public function createMany(array $attrs = [], bool $sync_relations = false): Collection
+    {
+        $result = new Collection();
+
+        if (array_is_list($attrs)) {
+            foreach ($attrs as $attr) {
+                $result->push($this->create($attr, $sync_relations));
+            }
+        } else {
+            $result->push($this->create($attrs, $sync_relations));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $attrs = [], bool $sync_relations = false): ?Model
     {
         // Create a new instance
         $entity = $this->createModel();
@@ -178,43 +196,44 @@ trait Store
      */
     public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): ?object
     {
-        $updated = null;
-
         // Find the given instance
-        $entity = $id instanceof Model ? $id : $this->find($id);
+        $entity = $id instanceof Model ? $id : $this->find($id, [$this->model()->getKeyName()]);
 
-        if ($entity) {
-            // Extract relationships
-            if ($sync_relations) {
-                $relations = $this->extractRelations($entity, $attrs);
-                Arr::forget($attrs, array_keys($relations));
-            }
-
-            // Fill instance with data
-            $entity->fill($attrs);
-
-            //Check if we are updating attributes values
-            $dirty = $sync_relations ? [1] : $entity->getDirty();
-
-            // Update the instance
-            $updated = $entity->save();
-
-            // Sync relationships
-            if ($sync_relations && isset($relations)) {
-                $this->syncRelations($entity, $relations, 'update');
-            }
-
-            if (count($dirty) > 0) {
-                // Fire the updated event
-                DB::afterCommit(
-                    fn() => $this->getContainer('events')->dispatch(
-                        $this->getRepositoryId() . '.entity.updated', [$this, $entity]
-                    )
-                );
-            }
+        if (!$entity) {
+            return null;
         }
 
-        return $updated ? $entity : $updated;
+        // Extract relationships
+        if ($sync_relations) {
+            $relations = $this->extractRelations($entity, $attrs);
+            Arr::forget($attrs, array_keys($relations));
+        }
+
+        // Fill instance with data
+        $entity->fill($attrs);
+
+        //Check if we are updating attributes values
+        $dirty = $sync_relations ? [1] : $entity->getDirty();
+
+        // Update the instance
+        $updated = $entity->save();
+
+        // Sync relationships
+        if ($sync_relations && isset($relations)) {
+            $this->syncRelations($entity, $relations, 'update');
+        }
+
+        if (count($dirty) > 0) {
+            // Fire the updated event
+            DB::afterCommit(
+                fn() => $this->getContainer('events')->dispatch(
+                    $this->getRepositoryId() . '.entity.updated',
+                    [$this, $entity]
+                )
+            );
+        }
+
+        return $updated ? $entity : null;
     }
 
     /**
@@ -227,7 +246,9 @@ trait Store
         $entity = $this->createModel();
 
         $inserted = $this->executeCallback(
-            static::class, __FUNCTION__, func_get_args(),
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->insert($values)
         );
 

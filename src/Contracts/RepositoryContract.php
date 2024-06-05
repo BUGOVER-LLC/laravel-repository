@@ -10,6 +10,16 @@ use Service\Repository\Repositories\Repository;
 
 interface RepositoryContract
 {
+    /**
+     * Dynamically pass missing static methods to the model.
+     *
+     * @param $method
+     * @param $parameters
+     *
+     * @return mixed
+     */
+    public static function __callStatic($method, $parameters);
+
     public function getConnection(): string;
 
     public function setConnection($name): Repository|EloquentRepositoryContract|static;
@@ -49,14 +59,4 @@ interface RepositoryContract
      * @return mixed
      */
     public function __call(string $method, array $parameters);
-
-    /**
-     * Dynamically pass missing static methods to the model.
-     *
-     * @param $method
-     * @param $parameters
-     *
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters);
 }

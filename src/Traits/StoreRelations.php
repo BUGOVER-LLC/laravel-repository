@@ -60,13 +60,14 @@ trait StoreRelations
         array $relations,
         string $event = 'create',
         bool $detaching = true
-    ): void {
+    ): void
+    {
         $model_repository = $this->getRelationRepositoryId($entity);
 
         foreach ($relations as $method => $relation) {
             switch ($relation['class']) {
                 case BelongsToMany::class:
-                    $entity->{$method}()->sync((array)$relation['values'], $detaching);
+                    $entity->{$method}()->sync((array) $relation['values'], $detaching);
 
                     $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
                         $this->getRepositoryId() . '.entity.update',

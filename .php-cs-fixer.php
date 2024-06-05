@@ -17,7 +17,7 @@ $rules = [
     'blank_line_after_namespace' => true,
     'blank_line_after_opening_tag' => true,
     'blank_line_before_statement' => [
-        'statements' => ['return'],
+        'statements' => ['break', 'continue', 'declare', 'return', 'throw', 'try'],
     ],
     'braces' => true,
     'cast_spaces' => true,
@@ -146,7 +146,6 @@ $rules = [
     ],
     'whitespace_after_comma_in_array' => true,
 ];
-
 
 $finder = Finder::create()
     ->in([

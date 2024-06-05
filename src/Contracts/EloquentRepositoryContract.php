@@ -312,7 +312,17 @@ interface EloquentRepositoryContract
      * @throws BindingResolutionException
      * @throws RepositoryException
      */
-    public function create(array $attrs = [], bool $sync_relations = false): ?object;
+    public function create(array $attrs = [], bool $sync_relations = false): ?Model;
+
+    /**
+     * Create many when $attrs is a list array or create
+     *
+     * @param array $attrs
+     * @param bool $sync_relations
+     * @return Collection
+     * @note recommended call this method used in transaction
+     */
+    public function createMany(array $attrs = [], bool $sync_relations = false): Collection;
 
     /**
      * Update an entity with the given attributes.
