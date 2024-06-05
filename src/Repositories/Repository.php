@@ -25,7 +25,6 @@ use function is_string;
  * Class Repository
  *
  * @package Service\Repository\Repositories
- *
  */
 abstract class Repository implements RepositoryContract, BaseCacheContract
 {
@@ -102,6 +101,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract
 
     /**
      * {@inheritdoc}
+     *
      * @throws RepositoryException
      */
     public function createModel(): Model
@@ -138,7 +138,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract
     {
         try {
             $entity = $this->getContainer('config')->get('repository.models');
-        } catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
+        } catch (ContainerExceptionInterface | NotFoundExceptionInterface) {
         }
 
         return $this->model ?: str_replace(['Repositories', 'Repository'], [$entity, ''], static::class);
@@ -271,7 +271,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract
              * @noinspection VariableFunctionsUsageInspection
              */
             $result = call_user_func($closure);
-        } catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
+        } catch (ContainerExceptionInterface | NotFoundExceptionInterface) {
         }
         // We're done, let's clean up!
         $this->resetRepository();

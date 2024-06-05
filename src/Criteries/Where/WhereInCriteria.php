@@ -34,7 +34,7 @@ class WhereInCriteria implements BaseCriteriaContract
     {
         if (!is_array($values)) {
             $values = [
-                $values
+                $values,
             ];
         }
 

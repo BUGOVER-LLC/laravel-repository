@@ -28,7 +28,7 @@ class GroupByArrayCriteria implements BaseCriteriaContract
     {
         if (!is_array($columns)) {
             $columns = [
-                $columns
+                $columns,
             ];
         }
 
@@ -44,7 +44,7 @@ class GroupByArrayCriteria implements BaseCriteriaContract
     {
         $q = null;
 
-        foreach ((array)$this->columns as $column) {
+        foreach ((array) $this->columns as $column) {
             $q = $query->groupBy($column);
         }
 

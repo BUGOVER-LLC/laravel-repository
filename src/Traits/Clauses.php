@@ -243,7 +243,8 @@ trait Clauses
         $second = null,
         string $type = 'inner',
         $where = false
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->join[] = [$table, $first, $operator, $second, $type, $where];
 
         return $this;
@@ -255,7 +256,7 @@ trait Clauses
     public function whereIn($attr, $values, $boolean = 'and', $not = false): WhereClauseContract
     {
         // The last `$boolean` & `$not` expressions are intentional to fix list() & array_pad() results
-        $this->whereIn[] = [$attr, $values, $boolean ?: 'and', (bool)$not];
+        $this->whereIn[] = [$attr, $values, $boolean ?: 'and', (bool) $not];
 
         return $this;
     }
@@ -317,7 +318,7 @@ trait Clauses
      */
     public function groupBy($column): static
     {
-        $this->groupBy = array_merge((array)$this->groupBy, is_array($column) ? $column : [$column]);
+        $this->groupBy = array_merge((array) $this->groupBy, is_array($column) ? $column : [$column]);
 
         return $this;
     }
@@ -358,7 +359,8 @@ trait Clauses
         $attributes,
         string $boolean = 'and',
         bool $not = false
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->whereJson[] = [$where, $attributes, $boolean ?: 'and', $not ?: false];
 
         return $this;
@@ -403,7 +405,8 @@ trait Clauses
         $count = 1,
         $boolean = 'and',
         $callback = null
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->has[] = [$relation, $operator, $count, $boolean, $callback];
 
         return $this;
@@ -439,7 +442,8 @@ trait Clauses
         $count = 1,
         $boolean = 'and',
         $callback = null
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->hasMorph[] = [$relation, $types, $operator, $count, $boolean, $callback];
 
         return $this;
@@ -454,7 +458,8 @@ trait Clauses
         $callback = null,
         $operator = '>=',
         $count = 1
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->whereHasMorph[] = [$relation, $types, $callback, $operator, $count];
 
         return $this;
@@ -538,7 +543,8 @@ trait Clauses
         string $second,
         string $operator = '<=',
         int $count = 0
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->whereRaw("DATEDIFF($first,$second) $operator $count");
 
         return $this;
@@ -572,7 +578,8 @@ trait Clauses
         string $second,
         string $operator = '<=',
         int $count = 0
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->whereRaw("TIMEDIFF($first,$second) $operator $count");
 
         return $this;
@@ -586,7 +593,8 @@ trait Clauses
         string $second,
         string $operator = '<=',
         int $count = 0
-    ): WhereClauseContract {
+    ): WhereClauseContract
+    {
         $this->whereRaw("TIMESTAMPDIFF($first,$second) $operator $count");
 
         return $this;

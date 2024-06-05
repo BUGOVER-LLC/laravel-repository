@@ -134,7 +134,25 @@ trait Store
     /**
      * @inheritDoc
      */
-    public function create(array $attrs = [], bool $sync_relations = false): ?object
+    public function createMany(array $attrs = [], bool $sync_relations = false): Collection
+    {
+        $result = new Collection();
+
+        if (array_is_list($attrs)) {
+            foreach ($attrs as $attr) {
+                $result->push($this->create($attr, $sync_relations));
+            }
+        } else {
+            $result->push($this->create($attrs, $sync_relations));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $attrs = [], bool $sync_relations = false): ?Model
     {
         // Create a new instance
         $entity = $this->createModel();
@@ -176,15 +194,13 @@ trait Store
      * @throws NotFoundExceptionInterface
      * @throws RepositoryException
      */
-    public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): bool|object
+    public function update(int|string|Model $id, array $attrs = [], bool $sync_relations = false): ?object
     {
-        $updated = null;
-
         // Find the given instance
         $entity = $id instanceof Model ? $id : $this->find($id, [$this->model()->getKeyName()]);
 
         if (!$entity) {
-            return false;
+            return null;
         }
 
         // Extract relationships
@@ -211,12 +227,13 @@ trait Store
             // Fire the updated event
             DB::afterCommit(
                 fn() => $this->getContainer('events')->dispatch(
-                    $this->getRepositoryId() . '.entity.updated', [$this, $entity]
+                    $this->getRepositoryId() . '.entity.updated',
+                    [$this, $entity]
                 )
             );
         }
 
-        return $updated ? $entity : $updated;
+        return $updated ? $entity : null;
     }
 
     /**
@@ -229,7 +246,9 @@ trait Store
         $entity = $this->createModel();
 
         $inserted = $this->executeCallback(
-            static::class, __FUNCTION__, func_get_args(),
+            static::class,
+            __FUNCTION__,
+            func_get_args(),
             fn() => $this->prepareQuery($this->createModel())->insert($values)
         );
 
