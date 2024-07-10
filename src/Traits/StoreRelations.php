@@ -94,6 +94,7 @@ trait StoreRelations
                         )) : null;
                     }
                     break;
+                case MorphOne::class:
                 case HasOne::class:
                     $rel_repository = $this->getRelationRepositoryId($entity, $method);
 
@@ -134,24 +135,6 @@ trait StoreRelations
                         )) : null;
                     }
                     break;
-                case MorphOne::class:
-                    $rel_repository = $this->getRelationRepositoryId($entity, $method);
-
-                    if ('update' === $event) {
-                        $entity->{$method}()->update($relation['values'], $detaching);
-
-                        $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
-                            $this->getRepositoryId() . '.entity.updated',
-                            [$this, $rel_repository, $relation['values']]
-                        )) : null;
-                    } else {
-                        $entity->{$method}()->create($relation['values'], $detaching);
-                        $model_repository ? DB::afterCommit(fn() => $this->getContainer('events')->dispatch(
-                            $this->getRepositoryId() . '.entity.created',
-                            [$this, $rel_repository, $relation['values']]
-                        )) : null;
-                    }
-                    break;
                 default:
                     throw new RepositoryException('Error relation type ' . $relation['class'], 500);
             }
@@ -161,14 +144,16 @@ trait StoreRelations
     /**
      * @param object $entity
      * @param string $method
-     * @return object|string
+     * @return object|null
      */
-    private function getRelationRepositoryId(object $entity, string $method = ''): object|string
+    private function getRelationRepositoryId(object $entity, string $method = ''): ?object
     {
-        $repository = $method ? $entity->{$method}()->getRelated()->getModelRepositoryClass(
-        ) : $entity->getModelRepositoryClass();
+        $repository = $method
+            ? $entity->{$method}()->getRelated()->getModelRepositoryClass()
+            : $entity->getModelRepositoryClass();
+
         if (!$repository) {
-            return '';
+            return null;
         }
 
         return app($repository);
