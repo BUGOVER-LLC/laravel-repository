@@ -61,7 +61,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract
      *
      * @var array
      */
-    protected array $fieldSearchable;
+    protected array $fieldSearchable = [];
 
     /**
      * {@inheritdoc}
