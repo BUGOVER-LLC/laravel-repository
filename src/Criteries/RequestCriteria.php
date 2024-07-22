@@ -67,9 +67,13 @@ class RequestCriteria implements BaseCriteriaContract
             );
             $fields = $this->parserFieldsSearch($fields_searchable, $search_fields);
             $is_first_field = true;
+            $model_force_and_where = null;
             $search_data = $this->parserSearchData($search);
             $search = $this->parserSearchValue($search);
-            $model_force_and_where = 'and' === strtolower($search_join);
+            
+	    if ($search_join) {
+                $model_force_and_where = 'and' === strtolower($search_join);
+            }
 
             $model = $model->where(
                 function ($query) use ($fields, $search, $search_data, $is_first_field, $model_force_and_where) {
