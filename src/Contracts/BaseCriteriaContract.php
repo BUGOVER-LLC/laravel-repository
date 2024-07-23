@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Service\Repository\Contracts;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * Class BaseCriteria
  *
@@ -19,5 +22,5 @@ interface BaseCriteriaContract
      *
      * @return mixed
      */
-    public function apply($query, EloquentRepositoryContract $repository): mixed;
+    public function apply($query, EloquentRepositoryContract $repository): Model|Builder;
 }

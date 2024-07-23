@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Service\Repository\Tests\Stubs;
 
+use Service\Repository\Repositories\Repository;
 use Service\Repository\Traits\Criteria;
-use Service\Service\Repository\Repositories\BaseRepository;
 
-class EloquentUserRepository extends BaseRepository
+class EloquentUserRepository extends Repository
 {
     use Criteria;
 

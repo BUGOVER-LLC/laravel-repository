@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Service\Repository\Criteries\Where;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Service\Repository\Contracts\BaseCriteriaContract;
 use Service\Repository\Contracts\EloquentRepositoryContract;
 
@@ -46,7 +48,7 @@ class WhereCriteria implements BaseCriteriaContract
      * @param EloquentRepositoryContract $repository
      * @return mixed
      */
-    public function apply($query, EloquentRepositoryContract $repository)
+    public function apply($query, EloquentRepositoryContract $repository): Model|Builder
     {
         return $query->where($this->attribute, $this->sign, $this->value);
     }

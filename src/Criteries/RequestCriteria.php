@@ -60,8 +60,8 @@ class RequestCriteria implements BaseCriteriaContract
         $search_join = $this->request->get(config('repository.criteria.params.searchJoin', 'searchJoin'), null);
         $sorted_by = !empty($sorted_by) ? $sorted_by : 'asc';
 
-        if ($search && is_array($fields_searchable) && count($fields_searchable)) {
-            $search_fields = is_array($search_fields) || null === $search_fields ? $search_fields : explode(
+        if ($search && count($fields_searchable)) {
+            $search_fields = \is_array($search_fields) || null === $search_fields ? $search_fields : explode(
                 ';',
                 $search_fields
             );
@@ -70,16 +70,14 @@ class RequestCriteria implements BaseCriteriaContract
             $model_force_and_where = null;
             $search_data = $this->parserSearchData($search);
             $search = $this->parserSearchValue($search);
-            
-	    if ($search_join) {
+
+            if ($search_join) {
                 $model_force_and_where = 'and' === strtolower($search_join);
             }
 
             $model = $model->where(
                 function ($query) use ($fields, $search, $search_data, $is_first_field, $model_force_and_where) {
-                    /**
-                     * @var Builder $query
-                     */
+                    /* @var Builder $query */
 
                     foreach ($fields as $field => $condition) {
                         if (is_numeric($field)) {
@@ -165,7 +163,7 @@ class RequestCriteria implements BaseCriteriaContract
             );
         }
 
-        if (isset($order_by) && !empty($order_by)) {
+        if (!empty($order_by)) {
             $order_by_split = explode(';', $order_by);
             if (count($order_by_split) > 1) {
                 $sorted_by_split = explode(';', $sorted_by);
@@ -178,7 +176,7 @@ class RequestCriteria implements BaseCriteriaContract
             }
         }
 
-        if (isset($filter) && !empty($filter)) {
+        if (!empty($filter)) {
             if (is_string($filter)) {
                 $filter = explode(';', $filter);
             }
@@ -205,7 +203,7 @@ class RequestCriteria implements BaseCriteriaContract
      * @return array
      * @throws Exception
      */
-    protected function parserFieldsSearch(array $fields = [], array $searchFields = null): array
+    private function parserFieldsSearch(array $fields = [], array $searchFields = null): array
     {
         if (null !== $searchFields && count($searchFields)) {
             $acceptedConditions = config('repository.criteria.acceptedConditions', [
@@ -253,7 +251,7 @@ class RequestCriteria implements BaseCriteriaContract
      *
      * @return array
      */
-    protected function parserSearchData($search): array
+    private function parserSearchData($search): array
     {
         $searchData = [];
 
@@ -277,7 +275,7 @@ class RequestCriteria implements BaseCriteriaContract
      * @param $search
      * @return string|null
      */
-    protected function parserSearchValue($search): ?string
+    private function parserSearchValue($search): ?string
     {
         if (strpos($search, ';') || strpos($search, ':')) {
             $values = explode(';', $search);
@@ -300,7 +298,7 @@ class RequestCriteria implements BaseCriteriaContract
      * @param $sortedBy
      * @return mixed
      */
-    protected function parserFieldsOrderBy($model, $orderBy, $sortedBy): mixed
+    private function parserFieldsOrderBy($model, $orderBy, $sortedBy): mixed
     {
         $split = explode('|', $orderBy);
         if (count($split) > 1) {

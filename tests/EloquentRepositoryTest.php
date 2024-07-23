@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Service\Repository\Tests;
+
 use Illuminate\Database\Eloquent\Collection;
 use Service\Repository\Tests\Stubs\EloquentUser;
 

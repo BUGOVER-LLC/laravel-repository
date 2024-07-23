@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Service\Repository\Tests;
+
 use Illuminate\Config\Repository as Config;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;

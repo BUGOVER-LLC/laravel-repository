@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Service\Repository\Tests\Stubs;
 
-use Service\Service\Repository\Repositories\BaseRepository;
+use Service\Repository\Repositories\Repository;
 
-class EloquentPostRepository extends BaseRepository
+class EloquentPostRepository extends Repository
 {
     protected string $model = EloquentPost::class;
 

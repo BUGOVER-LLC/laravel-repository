@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Service\Repository\Criteries\Order;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Service\Repository\Contracts\BaseCriteriaContract;
 use Service\Repository\Contracts\EloquentRepositoryContract;
 
@@ -39,7 +41,7 @@ class OrderByCriteria implements BaseCriteriaContract
      * @param EloquentRepositoryContract $repository
      * @return mixed
      */
-    public function apply($query, EloquentRepositoryContract $repository)
+    public function apply($query, EloquentRepositoryContract $repository): Model|Builder
     {
         return $query->orderBy($this->column, $this->order);
     }

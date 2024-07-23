@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Service\Repository\Criteries\Search;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Service\Repository\Contracts\BaseCriteriaContract;
 use Service\Repository\Contracts\EloquentRepositoryContract;
 
@@ -42,7 +43,7 @@ class SearchCriteria implements BaseCriteriaContract
      * @param EloquentRepositoryContract $repository
      * @return mixed
      */
-    public function apply($query, EloquentRepositoryContract $repository)
+    public function apply($query, EloquentRepositoryContract $repository): Model|Builder
     {
         $i = 0;
 
@@ -66,7 +67,7 @@ class SearchCriteria implements BaseCriteriaContract
      * @param $i
      * @return mixed
      */
-    protected function searchInModel($model, $column, $search, $i)
+    private function searchInModel($model, $column, $search, $i)
     {
         if (0 === $i) {
             return $model->where($column, 'LIKE', '%' . $search . '%');
@@ -83,7 +84,7 @@ class SearchCriteria implements BaseCriteriaContract
      * @param $i
      * @return mixed
      */
-    protected function searchInRelation($model, $relation, $column, $search, $i)
+    private function searchInRelation($model, $relation, $column, $search, $i)
     {
         if (0 === $i) {
             return $model->whereHas(
