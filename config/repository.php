@@ -133,7 +133,7 @@ return [
         | Specify which actions would you like to clear cache upon success.
         | All repository cached data will be cleared accordingly.
         |
-        | Default: ['CreateComponents', 'update', 'delete']
+        | Default: ['create', 'update', 'delete']
         |
         */
         'clear_on' => [
