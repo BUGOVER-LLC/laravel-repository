@@ -127,6 +127,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function fullSearch($against, ...$matches): ?static
     {
+        $matches = implode(',', $matches);
+
         return $this->whereRaw("MATCH ($matches) AGAINST (\\'$against\\' IN BOOLEAN MODE)");
     }
 
