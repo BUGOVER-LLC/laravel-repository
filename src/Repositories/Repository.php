@@ -10,6 +10,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Service\Repository\Contracts\AdditionalCacheContract;
 use Service\Repository\Contracts\BaseCacheContract;
 use Service\Repository\Contracts\EloquentRepositoryContract;
 use Service\Repository\Contracts\RepositoryContract;
@@ -26,7 +27,7 @@ use function is_string;
  *
  * @package Service\Repository\Repositories
  */
-abstract class Repository implements RepositoryContract, BaseCacheContract
+abstract class Repository implements RepositoryContract, BaseCacheContract, AdditionalCacheContract
 {
     use Cache;
     use Criteria;
@@ -38,24 +39,28 @@ abstract class Repository implements RepositoryContract, BaseCacheContract
      * @var Container
      */
     protected Container $container;
+
     /**
      * The connection name for the repository.
      *
      * @var string
      */
     protected string $connection;
+
     /**
      * The repository identifier.
      *
      * @var string
      */
     protected string $repositoryId;
+
     /**
      * The repository model.
      *
      * @var string
      */
     protected string $model;
+
     /**
      * The repository model search data structure.
      *

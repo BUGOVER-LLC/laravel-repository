@@ -15,6 +15,7 @@
     <rule ref="Generic.Commenting.DocComment">
         <exclude name="Generic.Commenting.DocComment.TagValueIndent"/>
         <exclude name="Generic.Commenting.DocComment.NonParamGroup"/>
+        <exclude name="Generic.Commenting.DocComment.MissingShort"/>
     </rule>
     <rule ref="Generic.ControlStructures.InlineControlStructure"/>
     <rule ref="Generic.Files.ByteOrderMark"/>
@@ -28,8 +29,8 @@
     <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="20"/>
-            <property name="absoluteComplexity" value="50"/>
+            <property name="complexity" value="10"/>
+            <property name="absoluteComplexity" value="12"/>
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
@@ -72,8 +73,8 @@
     <rule ref="PSR2">
         <exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE"/>
         <properties>
-            <property name="lineLimit" value="130"/>
-            <property name="absoluteLineLimit" value="135"/>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="125"/>
         </properties>
     </rule>
     <rule ref="Squiz.Arrays.ArrayDeclaration">
@@ -125,27 +126,13 @@
     <file>config</file>
     <file>test</file>
 
-    <exclude-pattern>*/.phpstorm.meta.php</exclude-pattern>
     <exclude-pattern>*/_ide_helper.php</exclude-pattern>
-    <exclude-pattern>*/database/*</exclude-pattern>
     <exclude-pattern>*/cache/*</exclude-pattern>
-    <exclude-pattern>*/*.js</exclude-pattern>
-    <exclude-pattern>*/*.css</exclude-pattern>
-    <exclude-pattern>*/*.xml</exclude-pattern>
     <exclude-pattern>*/*.blade.php</exclude-pattern>
     <exclude-pattern>*/autoload.php</exclude-pattern>
     <exclude-pattern>*/storage/*</exclude-pattern>
     <exclude-pattern>*/docs/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
-    <exclude-pattern>*/migrations/*</exclude-pattern>
-    <exclude-pattern>*/config/*</exclude-pattern>
-    <exclude-pattern>*/public/index.php</exclude-pattern>
-    <exclude-pattern>*/*.blade.php</exclude-pattern>
-    <exclude-pattern>*/Console/Kernel.php</exclude-pattern>
-    <exclude-pattern>*/Exceptions/Handler.php</exclude-pattern>
-    <exclude-pattern>*/Http/Kernel.php</exclude-pattern>
-    <exclude-pattern>*/Providers/*</exclude-pattern>
-    <exclude-pattern>*/resources/lang/*</exclude-pattern>
 
     <arg name="colors"/>
     <arg value="spv"/>

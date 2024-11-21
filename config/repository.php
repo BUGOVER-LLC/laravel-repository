@@ -96,7 +96,6 @@ return [
        |--------------------------------------------------------------------------
     */
     'cache' => [
-
         /*
         |--------------------------------------------------------------------------
         | Cache Keys File
@@ -109,7 +108,7 @@ return [
         | Default: storage_path('framework/cache/repository.json')
         |
         */
-        'keys_file' => base_path('var/framework/cache/repository.json'),
+        'keys_file' => base_path('storage/framework/cache/repository.json'),
 
         /*
         |--------------------------------------------------------------------------
@@ -123,7 +122,33 @@ return [
         | Default: -1
         |
         */
-        'lifetime' => (int)env('QUERY_CACHE_LIFETIME', 0),
+        'lifetime' => (int) env('QUERY_CACHE_LIFETIME', 0),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cache without a lifetime worked on current session id
+        |--------------------------------------------------------------------------
+        |
+        | Current config worked as current session only cache.
+        | Unique value for every request headers
+        |
+        | Default: false
+        |
+        */
+        'on_session' => env('QUERY_CACHE_ON_SESSION', false),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cache without lifetime worked on current session id
+        |--------------------------------------------------------------------------
+        |
+        | Current config worked as current session only cache.
+        | Unique value for every request headers
+        |
+        | Default: request-tempo-token
+        |
+        */
+        'on_session_key' => env('QUERY_CACHE_ON_SESSION_KEY', 'request-tempo-token'),
 
         /*
         |--------------------------------------------------------------------------

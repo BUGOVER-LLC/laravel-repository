@@ -146,7 +146,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         $value = null,
         $exists_column = '',
         string $boolean = 'and'
-    ): bool {
+    ): bool
+    {
         return $this->where($attribute, $operator, $value, $boolean)->exists($exists_column);
     }
 
@@ -156,7 +157,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function exists(string $column = '*'): bool
     {
-        return (bool)$this->executeCallback(
+        return (bool) $this->executeCallback(
             static::class,
             __FUNCTION__,
             func_get_args(),
@@ -245,7 +246,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         array $attributes = ['*'],
         string $page_name = 'page',
         null|int|string $page = null
-    ): LengthAwarePaginator {
+    ): LengthAwarePaginator
+    {
         $page = $page ?: Paginator::resolveCurrentPage($page_name);
 
         return $this->executeCallback(
@@ -264,7 +266,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         array $attributes = ['*'],
         string $page_name = 'page',
         null|int|string $page = null
-    ): \Illuminate\Contracts\Pagination\Paginator {
+    ): \Illuminate\Contracts\Pagination\Paginator
+    {
         $page = $page ?: Paginator::resolveCurrentPage($page_name);
 
         return $this->executeCallback(
@@ -288,7 +291,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         array $columns = ['*'],
         string $cursor_name = 'cursor',
         $cursor = null
-    ) {
+    )
+    {
         $cursor = $cursor ?: Paginator::resolveCurrentPage($cursor_name);
 
         return $this->executeCallback(
@@ -383,7 +387,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         array $attrs,
         bool $sync_relations = false,
         bool $merge = false
-    ): ?object {
+    ): ?object
+    {
         $queries_chunk = array_chunk($where, 3);
 
         if (1 < count($queries_chunk)) {
@@ -432,7 +437,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      */
     public function count($columns = '*'): int
     {
-        return (int)$this->executeCallback(
+        return (int) $this->executeCallback(
             static::class,
             __FUNCTION__,
             func_get_args(),
@@ -587,7 +592,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         string $alias = null,
         array $columns = [],
         string $indexBy = ''
-    ): QueryBuilder {
+    ): QueryBuilder
+    {
         return DB::table($this->model()->getTable(), $alias)
             ->select($columns)
             ->from($this->model()->getTable(), $alias)
@@ -607,7 +613,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         string $alias = null,
         array $columns = [],
         string $indexBy = ''
-    ): EloquentBuilder {
+    ): EloquentBuilder
+    {
         try {
             return $this
                 ->createModel()
@@ -632,7 +639,8 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
         string $alias = null,
         array $columns = [],
         string $indexBy = ''
-    ): EloquentBuilder {
+    ): EloquentBuilder
+    {
         try {
             return $this
                 ->createModel()

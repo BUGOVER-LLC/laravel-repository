@@ -28,6 +28,20 @@ trait Cache
     private ?int $cacheLifetime = null;
 
     /**
+     * The repository cache lifetime.
+     *
+     * @var int|null
+     */
+    private ?int $cacheOnSessionKey = null;
+
+    /**
+     * The repository cache lifetime.
+     *
+     * @var bool
+     */
+    private bool $cacheOnSession = false;
+
+    /**
      * The repository cache driver.
      *
      * @var null|string
@@ -61,6 +75,9 @@ trait Cache
 
     /**
      * @return Repository|Cache
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
      */
     public function forgetCache(): self
     {
@@ -88,6 +105,8 @@ trait Cache
             return $this->cacheLifetime ?? $this->getContainer('config')->get('repository.cache.lifetime');
         } catch (NotFoundExceptionInterface | ContainerExceptionInterface) {
         }
+
+        return null;
     }
 
     /**

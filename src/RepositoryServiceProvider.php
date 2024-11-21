@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Service\Repository;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use Service\Repository\Contracts\EloquentRepositoryContract;
 use Service\Repository\Contracts\RepositoryContract;
@@ -33,9 +32,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind('repository.listener', RepositoryEventListener::class);
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
     public function boot(): void
     {
         $this->publishes([__DIR__ . '/../config/repository.php' => base_path('config/repository.php')], 'config');
