@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Service\Repository\Listeners;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Service\Repository\Repositories\EloquentRepository;
 
 use function in_array;
@@ -35,6 +37,9 @@ class RepositoryEventListener
      * @param array $entities
      *
      * @return void
+     * @throws \JsonException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function entityCreated(string $event_name, array $entities): void
     {
@@ -56,6 +61,9 @@ class RepositoryEventListener
      * @param array $entities
      *
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \JsonException
      */
     public function entityUpdated(string $event_name, array $entities): void
     {
@@ -77,6 +85,9 @@ class RepositoryEventListener
      * @param array $entities
      *
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \JsonException
      */
     public function entityDeleted(string $event_name, array $entities): void
     {

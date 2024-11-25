@@ -24,6 +24,7 @@ use function is_string;
 
 /**
  * Trait Criteria
+ *
  * @package Service\Repository\Traits
  */
 trait Criteria
@@ -92,11 +93,12 @@ trait Criteria
             throw RepositoryException::listNotFound($list, $this);
         }
 
-        if (!$criterion instanceof Closure &&
+        $check = !$criterion instanceof Closure &&
             !$criterion instanceof BaseCriteriaContract &&
             !is_string($criterion) &&
-            !is_array($criterion)
-        ) {
+            !is_array($criterion);
+
+        if ($check) {
             throw CriteriaException::wrongCriterionType($criterion);
         }
 
@@ -109,8 +111,10 @@ trait Criteria
         //If the criterion is an array we will assume it is an array of class name with arguments
         //and try to instantiate this
         if (is_array($criterion)) {
-            $criterion = call_user_func_array([$this, 'instantiateCriterion'],
-                $this->extractCriterionClassAndArgs($criterion));
+            $criterion = call_user_func_array(
+                [$this, 'instantiateCriterion'],
+                $this->extractCriterionClassAndArgs($criterion)
+            );
         }
 
         $this->{$list}[$this->getCriterionName($criterion)] = $criterion;
@@ -126,7 +130,6 @@ trait Criteria
      *
      * @return array
      * @throws CriteriaException
-     *
      */
     protected function extractCriterionClassAndArgs(array $criterion): array
     {
@@ -372,7 +375,6 @@ trait Criteria
      * @return mixed
      * @throws CriteriaException
      * @throws ReflectionException
-     *
      */
     protected function instantiateCriterion($class, $arguments): mixed
     {

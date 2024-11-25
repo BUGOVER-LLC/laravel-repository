@@ -74,6 +74,27 @@ trait Cache
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isCacheOnSessionEnabled(): bool
+    {
+        return $this->cacheOnSession;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTempoToken(): ?string
+    {
+        try {
+            return request()->headers->get($this->getContainer('config')->get('repository.cache.on_session_key'));
+        } catch (ContainerExceptionInterface | NotFoundExceptionInterface) {
+        }
+
+        return null;
+    }
+
+    /**
      * @return Repository|Cache
      * @throws ContainerExceptionInterface
      * @throws JsonException
@@ -124,15 +145,16 @@ trait Cache
      *
      * @return array
      * @throws JsonException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function flushCacheKeys(): array
     {
         $flushed_keys = [];
         $called_class = static::class;
-        $config = $this->getContainer('config')->get('repository.cache');
-        $cache_keys = $this->getCacheKeys($config['keys_file']);
+        try {
+            $config = $this->getContainer('config')->get('repository.cache');
+            $cache_keys = $this->getCacheKeys($config['keys_file']);
+        } catch (ContainerExceptionInterface | NotFoundExceptionInterface) {
+        }
 
         if (isset($cache_keys[$called_class]) && is_array($cache_keys[$called_class])) {
             foreach ($cache_keys[$called_class] as $cache_key) {
@@ -278,7 +300,7 @@ trait Cache
         ];
 
         try {
-            $hash = md5(json_encode($args + $salts, JSON_THROW_ON_ERROR));
+            $hash = hash('xxh3', json_encode($args + $salts, JSON_THROW_ON_ERROR));
         } catch (JsonException) {
         }
 
