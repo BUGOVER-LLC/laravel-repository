@@ -6,7 +6,6 @@ namespace Service\Repository\Repositories;
 
 use Closure;
 use Exception;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -14,9 +13,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
-use JsonException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Service\Repository\Contracts\EloquentRepositoryContract;
 use Service\Repository\Contracts\WhereClauseContract;
 use Service\Repository\Exceptions\EntityNotFoundException;
@@ -372,51 +368,6 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
                 return $this->prepareQuery($this->createModel())->get($attributes);
             }
         );
-    }
-
-    /**
-     * @inheritdoc
-     * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
-     * @throws RepositoryException
-     */
-    public function updateOrCreate(
-        array $where,
-        array $attrs,
-        bool $sync_relations = false,
-        bool $merge = false
-    ): ?object
-    {
-        $queries_chunk = array_chunk($where, 3);
-
-        if (1 < count($queries_chunk)) {
-            foreach ($queries_chunk as $query) {
-                $this->where($query[0], $query[1], $query[2]);
-            }
-        } else {
-            $this->where($queries_chunk[0][0], $queries_chunk[0][1], $queries_chunk[0][2]);
-        }
-
-        $result = null;
-        $entities = $this->findAll();
-
-        if (1 < $entities->count()) {
-            foreach ($entities as $entity) {
-                $result = $this->update($entity->{$entity->getKeyName()}, $attrs, $sync_relations);
-            }
-        } elseif (1 === $entities->count()) {
-            $query_attribute[$queries_chunk[0][0]] = $queries_chunk[0][2];
-            $attribute = array_merge($query_attribute, $attrs);
-            $result = $this->update($entities[0]->{$entities[0]->getKeyName()}, $attribute, $sync_relations);
-        } else {
-            $query_attribute[$queries_chunk[0][0]] = $queries_chunk[0][2];
-            $attribute = array_merge($query_attribute, $attrs);
-            $result = $this->create($attribute, $sync_relations);
-        }
-
-        return $result;
     }
 
     /**

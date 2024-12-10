@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Service\Repository\Traits;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -234,6 +235,51 @@ trait Store
         }
 
         return $updated ? $entity : null;
+    }
+
+    /**
+     * @inheritdoc
+     * @throws BindingResolutionException
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
+     * @throws RepositoryException
+     */
+    public function updateOrCreate(
+        array $where,
+        array $attrs,
+        bool $sync_relations = false,
+        bool $merge = false
+    ): ?object
+    {
+        $queries_chunk = array_chunk($where, 3);
+
+        if (1 < count($queries_chunk)) {
+            foreach ($queries_chunk as $query) {
+                $this->where($query[0], $query[1], $query[2]);
+            }
+        } else {
+            $this->where($queries_chunk[0][0], $queries_chunk[0][1], $queries_chunk[0][2]);
+        }
+
+        $result = null;
+        $entities = $this->findAll();
+        $entities_count = $entities->count();
+
+        $query_attribute[$queries_chunk[0][0]] = $queries_chunk[0][2];
+        $attributes = $merge ? array_merge($query_attribute, $attrs) : $attrs;
+
+        if (1 < $entities_count) {
+            foreach ($entities as $entity) {
+                $result = $this->update($entity->{$entity->getKeyName()}, $attributes, $sync_relations);
+            }
+        } elseif (1 === $entities_count) {
+            $result = $this->update($entities[0]->{$entities[0]->getKeyName()}, $attributes, $sync_relations);
+        } else {
+            $result = $this->create($attributes, $sync_relations);
+        }
+
+        return $result;
     }
 
     /**

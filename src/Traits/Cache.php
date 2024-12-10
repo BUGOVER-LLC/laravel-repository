@@ -243,7 +243,7 @@ trait Cache
      * @param array $args
      * @return string
      */
-    protected function generateCacheHash(array $args): string
+    private function generateCacheHash(array $args): string
     {
         $salts = [
             $this->getRepositoryId(),
