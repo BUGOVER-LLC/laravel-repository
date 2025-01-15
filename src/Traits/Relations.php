@@ -15,7 +15,7 @@ use Service\Repository\Exceptions\RepositoryException;
 
 use function get_class;
 
-trait StoreRelations
+trait Relations
 {
     /**
      * Extract relationships.

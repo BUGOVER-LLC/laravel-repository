@@ -20,34 +20,85 @@ interface RepositoryContract
      */
     public static function __callStatic($method, $parameters);
 
+    /**
+     * @return string
+     */
     public function getConnection(): string;
 
+    /**
+     * @param $name
+     * @return Repository|EloquentRepositoryContract|$this
+     */
     public function setConnection($name): Repository|EloquentRepositoryContract|static;
 
+    /**
+     * @return string
+     */
     public function getRepositoryId(): string;
 
+    /**
+     * @param $repositoryId
+     * @return Repository|EloquentRepositoryContract|$this
+     */
     public function setRepositoryId($repositoryId): Repository|EloquentRepositoryContract|static;
 
+    /**
+     * @return Model
+     */
     public function createModel(): Model;
 
+    /**
+     * @return string
+     */
     public function getModel(): string;
 
+    /**
+     * @param $model
+     * @return $this
+     */
     public function setModel($model): static;
 
+    /**
+     * @param $service
+     * @return mixed
+     */
     public function getContainer($service = null);
 
+    /**
+     * @param Container $container
+     * @return $this
+     */
     public function setContainer(Container $container): static;
 
+    /**
+     * @return array
+     */
     public function getFieldsSearchable(): array;
 
+    /**
+     * @return array
+     */
     public function getFillable(): array;
 
+    /**
+     * @param $attributes
+     * @return Model
+     */
     public function model($attributes = []): Model;
 
+    /**
+     * @return string|null
+     */
     public function getKeyName(): ?string;
 
+    /**
+     * @return string|null
+     */
     public function getMap(): ?string;
 
+    /**
+     * @return string|null
+     */
     public function getTable(): ?string;
 
     /**

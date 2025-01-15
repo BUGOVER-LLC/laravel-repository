@@ -20,7 +20,7 @@ use Service\Repository\Exceptions\RepositoryException;
 use Service\Repository\Traits\Clauses;
 use Service\Repository\Traits\Prepare;
 use Service\Repository\Traits\Store;
-use Service\Repository\Traits\StoreRelations;
+use Service\Repository\Traits\Relations;
 
 use function count;
 use function func_get_args;
@@ -38,7 +38,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     use Prepare;
     use Clauses;
     use Store;
-    use StoreRelations;
+    use Relations;
 
     /**
      * @inheritDoc

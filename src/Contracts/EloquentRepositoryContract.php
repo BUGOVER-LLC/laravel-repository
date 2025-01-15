@@ -356,7 +356,7 @@ interface EloquentRepositoryContract
      *
      * @return bool|object
      */
-    public function delete(int|string $id, array $permissions = []): false|object;
+    public function delete(int|string $id, array $sync_relation = []): false|object;
 
     /**
      * Restore an entity with the given id.

@@ -90,9 +90,9 @@ class RequestCriteria implements BaseCriteriaContract
                         $condition = strtolower(trim($condition));
 
                         if (isset($search_data[$field])) {
-                            $value = ('like' === $condition || 'ilike' === $condition) ? "%{$search_data[$field]}%" : $search_data[$field];
+                            $value = ('like' === $condition || 'ilike' === $condition) ? "%$search_data[$field]%" : $search_data[$field];
                         } elseif (null !== $search && !in_array($condition, ['in', 'between'])) {
-                            $value = ('like' === $condition || 'ilike' === $condition) ? "%{$search}%" : $search;
+                            $value = ('like' === $condition || 'ilike' === $condition) ? "%$search%" : $search;
                         }
 
                         $relation = null;

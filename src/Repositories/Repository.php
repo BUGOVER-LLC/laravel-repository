@@ -129,7 +129,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract, Addi
 
         if (!$entity instanceof Model) {
             throw new RepositoryException(
-                "Class {$entity} must be an instance of \\Illuminate\\Database\\Eloquent\\Model"
+                "Class $entity must be an instance of \\Illuminate\\Database\\Eloquent\\Model"
             );
         }
 

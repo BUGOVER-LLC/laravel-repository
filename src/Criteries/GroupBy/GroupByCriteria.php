@@ -32,7 +32,7 @@ class GroupByCriteria implements BaseCriteriaContract
     /**
      * @param mixed $query
      * @param EloquentRepositoryContract $repository
-     * @return mixed
+     * @return Model|Builder
      */
     public function apply($query, EloquentRepositoryContract $repository): Model|Builder
     {

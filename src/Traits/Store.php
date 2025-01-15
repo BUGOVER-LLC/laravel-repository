@@ -105,7 +105,7 @@ trait Store
      * @throws NotFoundExceptionInterface
      * @throws RepositoryException
      */
-    public function delete(int|string $id, array $relations = []): false|object
+    public function delete(int|string $id, array $sync_relations = []): false|object
     {
         $deleted = false;
 
@@ -114,9 +114,9 @@ trait Store
 
         if ($entity) {
             // Delete the instance
-            if ($relations) {
-                $relations = $this->extractRelations($entity, $relations);
-                $this->syncRelations($entity, $relations);
+            if (!empty($sync_relations)) {
+                $relations = $this->extractRelations($entity, $sync_relations);
+                $this->syncRelations($entity, $relations, 'delete');
             }
 
             $deleted = $entity->delete();
