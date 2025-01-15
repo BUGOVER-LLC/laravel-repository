@@ -18,7 +18,7 @@ interface BaseCacheContract
      *
      * @return $this
      */
-    public function setCacheLifetime($cacheLifetime): self;
+    public function setCacheLifetime(int $cacheLifetime): self;
 
     /**
      * Get the repository cache lifetime.

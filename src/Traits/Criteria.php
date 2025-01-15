@@ -257,7 +257,7 @@ trait Criteria
      *
      * @return $this
      */
-    public function skipCriteria($flag = true): static
+    public function skipCriteria(bool $flag = true): static
     {
         $this->skipCriteria = $flag;
 

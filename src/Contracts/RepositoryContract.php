@@ -29,7 +29,7 @@ interface RepositoryContract
      * @param $name
      * @return Repository|EloquentRepositoryContract|$this
      */
-    public function setConnection($name): Repository|EloquentRepositoryContract|static;
+    public function setConnection(string $name): Repository|EloquentRepositoryContract|static;
 
     /**
      * @return string
@@ -37,10 +37,10 @@ interface RepositoryContract
     public function getRepositoryId(): string;
 
     /**
-     * @param $repositoryId
+     * @param string $repositoryId
      * @return Repository|EloquentRepositoryContract|$this
      */
-    public function setRepositoryId($repositoryId): Repository|EloquentRepositoryContract|static;
+    public function setRepositoryId(string $repositoryId): Repository|EloquentRepositoryContract|static;
 
     /**
      * @return Model
@@ -53,10 +53,10 @@ interface RepositoryContract
     public function getModel(): string;
 
     /**
-     * @param $model
+     * @param string $model
      * @return $this
      */
-    public function setModel($model): static;
+    public function setModel(string $model): static;
 
     /**
      * @param $service

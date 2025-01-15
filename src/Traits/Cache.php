@@ -133,7 +133,7 @@ trait Cache
     /**
      * {@inheritdoc}
      */
-    public function setCacheLifetime($cacheLifetime): self
+    public function setCacheLifetime(int $cacheLifetime): self
     {
         $this->cacheLifetime = $cacheLifetime;
 

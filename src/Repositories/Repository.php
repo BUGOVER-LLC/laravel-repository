@@ -79,7 +79,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract, Addi
     /**
      * {@inheritdoc}
      */
-    public function setConnection($name): Repository|EloquentRepositoryContract|static
+    public function setConnection(string $name): Repository|EloquentRepositoryContract|static
     {
         $this->connection = $name;
 
@@ -97,7 +97,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract, Addi
     /**
      * {@inheritdoc}
      */
-    public function setRepositoryId($repositoryId): Repository|EloquentRepositoryContract|static
+    public function setRepositoryId(string $repositoryId): Repository|EloquentRepositoryContract|static
     {
         $this->repositoryId = $repositoryId;
 
@@ -152,7 +152,7 @@ abstract class Repository implements RepositoryContract, BaseCacheContract, Addi
     /**
      * {@inheritdoc}
      */
-    public function setModel($model): static
+    public function setModel(string $model): static
     {
         $this->model = $model;
 
