@@ -238,7 +238,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      * {@inheritdoc}
      */
     public function paginate(
-        int|string $per_page = null,
+        int|string|null $per_page = null,
         array $attributes = ['*'],
         string $page_name = 'page',
         null|int|string $page = null
@@ -258,7 +258,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      * {@inheritdoc}
      */
     public function simplePaginate(
-        int|string $per_page = null,
+        int|string|null $per_page = null,
         array $attributes = ['*'],
         string $page_name = 'page',
         null|int|string $page = null
@@ -283,7 +283,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      * {@inheritdoc}
      */
     public function cursorPaginate(
-        int|string $per_page = null,
+        int|string|null $per_page = null,
         array $columns = ['*'],
         string $cursor_name = 'cursor',
         $cursor = null
@@ -399,7 +399,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     /**
      * @inheritDoc
      */
-    public function store(int $id = null, array $attrs = [], bool $sync_relations = false): null|object|bool
+    public function store(int|null $id = null, array $attrs = [], bool $sync_relations = false): null|object|bool
     {
         return !$id ? $this->create($attrs, $sync_relations) : $this->update($id, $attrs, $sync_relations);
     }
@@ -438,7 +438,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
     /**
      * {@inheritdoc}
      */
-    public function beginTransaction(Closure $closure = null, Closure $closure_before = null, int $tries = 1)
+    public function beginTransaction(Closure|null $closure = null, Closure|null $closure_before = null, int $tries = 1)
     {
         if ($closure_before) {
             $closure_before();
@@ -540,7 +540,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      * @throws RepositoryException
      */
     protected function createQueryBuilder(
-        string $alias = null,
+        string|null $alias = null,
         array $columns = [],
         string $indexBy = ''
     ): QueryBuilder
@@ -561,7 +561,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      * @return EloquentBuilder
      */
     protected function createModelBuilder(
-        string $alias = null,
+        string|null $alias = null,
         array $columns = [],
         string $indexBy = ''
     ): EloquentBuilder
@@ -587,7 +587,7 @@ class EloquentRepository extends Repository implements WhereClauseContract, Eloq
      * @return EloquentBuilder
      */
     protected function createNewModelBuilder(
-        string $alias = null,
+        string|null $alias = null,
         array $columns = [],
         string $indexBy = ''
     ): EloquentBuilder

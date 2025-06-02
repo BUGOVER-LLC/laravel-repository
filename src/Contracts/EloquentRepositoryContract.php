@@ -204,7 +204,7 @@ interface EloquentRepositoryContract
      * @return LengthAwarePaginator
      */
     public function paginate(
-        int|string $per_page = null,
+        int|string|null $per_page = null,
         array $attributes = ['*'],
         string $page_name = 'page',
         null|int|string $page = null
@@ -220,7 +220,7 @@ interface EloquentRepositoryContract
      * @return Paginator
      */
     public function simplePaginate(
-        int|string $per_page = null,
+        int|string|null $per_page = null,
         array $attributes = ['*'],
         string $page_name = 'page',
         null|int|string $page = null
@@ -236,7 +236,7 @@ interface EloquentRepositoryContract
      * @return mixed
      */
     public function cursorPaginate(
-        int|string $per_page = null,
+        int|string|null $per_page = null,
         array $columns = ['*'],
         string $cursor_name = 'cursor',
         $cursor = null
@@ -347,7 +347,7 @@ interface EloquentRepositoryContract
      * @throws NotFoundExceptionInterface
      * @throws RepositoryException
      */
-    public function store(int $id = null, array $attrs = [], bool $sync_relations = false): null|object|bool;
+    public function store(int|null $id = null, array $attrs = [], bool $sync_relations = false): null|object|bool;
 
     /**
      * Delete an entity with the given id.
@@ -376,7 +376,7 @@ interface EloquentRepositoryContract
      * @return void|mixed
      * @throws Exception
      */
-    public function beginTransaction(Closure $closure = null, Closure $closure_before = null, int $tries = 1);
+    public function beginTransaction(Closure|null $closure = null, Closure|null $closure_before = null, int $tries = 1);
 
     /**
      * Commit the active database transaction.

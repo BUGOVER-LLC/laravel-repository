@@ -275,7 +275,7 @@ trait Clauses
     /**
      * {@inheritdoc}
      */
-    public function whereHas($rel, Closure $callback = null, $operator = '>=', $count = 1): WhereClauseContract
+    public function whereHas($rel, Closure|null $callback = null, $operator = '>=', $count = 1): WhereClauseContract
     {
         // The last `$operator` & `$count` expressions are intentional to fix list() & array_pad() results
         $this->whereHas[] = [$rel, $callback, $operator ?: '>=', $count ?: 1];

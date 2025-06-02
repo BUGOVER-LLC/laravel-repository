@@ -4,7 +4,7 @@
   "minimum-stability": "stable",
   "license": "MIT",
   "type": "repository-eloquent",
-  "version": "1.5.9",
+  "version": "1.7.0",
   "authors": [
     {
       "name": "artak",
@@ -16,11 +16,11 @@
     "php-64bit": ">=8.1.2",
     "ext-pdo": "*",
     "ext-json": "*",
-    "illuminate/database": "^9.0|^10.0|^11.0",
-    "illuminate/contracts": "^9.0|^10.0|^11.0",
-    "illuminate/support": "^9.0|^10.0|^11.0",
-    "illuminate/pagination": "^9.0|^10.0|^11.0",
-    "illuminate/http": "^9.0|^10.0|^11.0"
+    "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
+    "illuminate/contracts": "^9.0|^10.0|^11.0|^12.0",
+    "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+    "illuminate/pagination": "^9.0|^10.0|^11.|^12.00",
+    "illuminate/http": "^9.0|^10.0|^11.0|^12.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

@@ -387,7 +387,7 @@ interface WhereClauseContract
      *
      * @return static
      */
-    public function whereHas($rel, Closure $callback = null, $operator = '>=', $count = 1): WhereClauseContract;
+    public function whereHas($rel, Closure|null $callback = null, $operator = '>=', $count = 1): WhereClauseContract;
 
     /**
      * Set the "offset" value of the query.
